@@ -60,6 +60,7 @@ public static class Constant
     public const string EVENT_ON_IAP_CHANGE = "EVENT_ON_IAP_CHANGE";
     public const string EVENT_ON_FRIEND_UPDATE = "EVENT_ON_FRIEND_UPDATE";
     public const string EVENT_ON_PARTNER_UPDATE = "EVENT_ON_PARTNER_UPDATE";
+    public const string EVENT_ON_REMOTE_CONFIG_UPDATE = "EVENT_ON_REMOTE_CONFIG_UPDATE";
 
 
 
