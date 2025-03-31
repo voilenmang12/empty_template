@@ -1,0 +1,14 @@
+/.vs/
+/Builds/
+/Library/
+/Logs/
+/obj/
+/UserSettings/
+/Temp
+/Buiilds
+/*.csproj
+/*.vsconfig
+/*.sln
+/remote_config_data
+/.idea/
+Build
