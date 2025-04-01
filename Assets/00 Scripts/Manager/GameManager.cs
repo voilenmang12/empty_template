@@ -41,6 +41,7 @@ public class GameManager : Singleton<GameManager>
         yield return new WaitUntil(() => LoadingPanel.Instance);
         yield return new WaitUntil(() => DataSystem.Instance);
         yield return new WaitUntil(() => AccountManager.Instance);
+        yield return new WaitUntil(() => IAPManager.Instance);
 
         var buildVersion = Resources.Load<BuildVersion>("BuildVersion");
         BuildType = buildVersion.buildType;
@@ -62,10 +63,13 @@ public class GameManager : Singleton<GameManager>
         yield return StartCoroutine(IIAPController.Instance.IEInit());
         yield return StartCoroutine(IDailyQuestController.Instance.IEInit());
         yield return StartCoroutine(ILuckyWheelController.Instance.IEInit());
-        yield return StartCoroutine(IFriendInviteController.Instance.IEInit());
-        yield return StartCoroutine(IPartnerReferalController.Instance.IEInit());
-        yield return StartCoroutine(ILeaderboardController.Instance.IEInit());
-        yield return StartCoroutine(IMailboxController.Instance.IEInit());
+        if(Platform != EPlatform.Android)
+        {
+            yield return StartCoroutine(IFriendInviteController.Instance.IEInit());
+            yield return StartCoroutine(IPartnerReferalController.Instance.IEInit());
+            yield return StartCoroutine(ILeaderboardController.Instance.IEInit());
+            yield return StartCoroutine(IMailboxController.Instance.IEInit());
+        }
 
         LoadingPanel.Instance.ShowTextLoading("Loading Complete");
         yield return null;
@@ -79,6 +83,9 @@ public class GameManager : Singleton<GameManager>
     }
     IEnumerator IEGetConfig()
     {
+        dicCommonConfigs = new Dictionary<string, string>();
+        yield break;
+
         LoadingPanel.Instance.ShowTextLoading("Get Config");
         int count = 5;
         void LoadConfig()
@@ -98,7 +105,9 @@ public class GameManager : Singleton<GameManager>
     }
     public string GetConfig(string key)
     {
-        return dicCommonConfigs[key];
+        if(dicCommonConfigs.ContainsKey(key))
+            return dicCommonConfigs[key];
+        return "";
     }
     private void Update()
     {

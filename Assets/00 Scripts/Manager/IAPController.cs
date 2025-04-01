@@ -8,7 +8,7 @@ public interface IIAPController : IController<IAPControllerLocal>
 {
     public int GetPackBought(EIAPPackType packType);
     public void PurchasePack(EIAPPackType packType);
-    public void OnPurchaseSuccess(EIAPPackType packType, string transactionID);
+    public void OnPurchaseSuccess(string packId, string transactionID);
     public void FetchHistory();
     public IAPHistoryResponse GetHistory();
     public bool NotiUI();
@@ -76,17 +76,22 @@ public class IAPControllerLocal :
     }
     public override IEnumerator IEFetchConfigs()
     {
+        IAPManager.Instance.InitializePurchasing();
+        yield break;
+
         DataSystem.Instance.dataIAP.ParseConfig(GameManager.Instance.GetConfig("iap_config"));
         yield return null;
     }
     protected override void OnFirstTick()
     {
         base.OnFirstTick();
+        return;
         FetchHistory();
     }
     protected override void FirstTimeInit()
     {
         base.FirstTimeInit();
+        return;
         UniRx.Observable.Interval(System.TimeSpan.FromSeconds(30)).Subscribe(_ => FetchHistory()).AddTo(GameManager.Instance.gameObject);
     }
     public int GetPackBought(EIAPPackType packType)
@@ -94,8 +99,9 @@ public class IAPControllerLocal :
         return cachedData.GetPackBought(packType);
     }
 
-    public void OnPurchaseSuccess(EIAPPackType packType, string transactionID)
+    public void OnPurchaseSuccess(string packID, string transactionID)
     {
+        EIAPPackType packType = DataSystem.Instance.dataIAP.dicId[packID];
         DataSystem.Instance.dataIAP.dicConfigs[packType].GetReward().ReceiveAndShow(EResourceFrom.IAP);
         lstNotiMessage.Add(transactionID);
         cachedData.SetPackBought(packType, transactionID);
@@ -107,6 +113,7 @@ public class IAPControllerLocal :
 #if UNITY_WEBGL
         TelegramManager.OpenInvoice(dicInvoiceLink[DataSystem.Instance.dataIAP.dicConfigs[packType].packID]);
 #endif
+        IAPManager.Instance.PurchaseIAP(DataSystem.Instance.dataIAP.dicConfigs[packType].packID);
     }
     public void SendInvoiceLinkToDev(EIAPPackType packType)
     {
@@ -141,7 +148,7 @@ public class IAPControllerLocal :
                     if (!cachedData.GetPackHandled(item.id))
                     {
                         if(item.ValidPack())
-                            OnPurchaseSuccess(DataSystem.Instance.dataIAP.dicId[item.shopId], item.id);
+                            OnPurchaseSuccess(item.shopId, item.id);
                         else
                             cachedData.SetPackBought(item.id);
                     }

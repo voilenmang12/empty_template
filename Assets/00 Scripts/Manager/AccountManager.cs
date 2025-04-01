@@ -36,48 +36,51 @@ public class AccountManager : Singleton<AccountManager>
 #if UNITY_WEBGL
         WebGLInput.captureAllKeyboardInput = false;
 #endif
-        LoadingPanel.Instance.ShowTextLoading("Get access Token");
 #if LOCAL_BUILD
         Debug.Log("LocalBuild");
         yield break;
 #endif
+
 #if UNITY_EDITOR
         var buildVersion = Resources.Load<BuildVersion>("BuildVersion");
         UserId = buildVersion.userId;
-        if (buildVersion.platform == EPlatform.Telegram)
+#endif
+        switch (GameManager.Instance.Platform)
         {
-            yield return StartCoroutine(HTTPManager.Instance.LoginDev(buildVersion.userId, s =>
-            {
-                tele_user_token = s.access_token;
-                //TokenExpireDate = Helper.ParseDateTime(s.expiresIn).AddMinutes(-5);
-            }));
-            yield return StartCoroutine(HTTPManager.Instance.GetUserInfoTele(s =>
-            {
-                TelegramUserInfo = s;
-            }));
-            yield break;
-        }
-        else if (buildVersion.platform == EPlatform.Privy)
-        {
+            case EPlatform.Telegram:
+#if UNITY_EDITOR
+                yield return StartCoroutine(HTTPManager.Instance.LoginDev(buildVersion.userId, s =>
+                {
+                    tele_user_token = s.access_token;
+                    //TokenExpireDate = Helper.ParseDateTime(s.expiresIn).AddMinutes(-5);
+                }));
+                yield return StartCoroutine(HTTPManager.Instance.GetUserInfoTele(s =>
+                {
+                    TelegramUserInfo = s;
+                }));
+                yield break;
+#endif
+                URL = Application.absoluteURL;
+                yield return StartCoroutine(IELoginToServer());
+                yield return StartCoroutine(HTTPManager.Instance.GetUserInfoTele(s =>
+                {
+                    TelegramUserInfo = s;
+                }));
+                break;
+            case EPlatform.Privy:
 #if UNITY_WEBGL
             PrivyManager.Instance.OnListenLogin(buildVersion.userId);
 #endif
+
+                LoadingPanel.Instance.loginPanel.ShowLoginPanel();
+                yield return new WaitUntil(() => LoadingPanel.Instance.loginPanel.LoginSuccess);
+                break;
+            case EPlatform.Android:
+                break;
+            default:
+                break;
         }
-#endif
-        if (GameManager.Instance.Platform == EPlatform.Telegram)
-        {
-            URL = Application.absoluteURL;
-            yield return StartCoroutine(IELoginToServer());
-            yield return StartCoroutine(HTTPManager.Instance.GetUserInfoTele(s =>
-            {
-                TelegramUserInfo = s;
-            }));
-        }
-        else if (GameManager.Instance.Platform == EPlatform.Privy)
-        {
-            LoadingPanel.Instance.loginPanel.ShowLoginPanel();
-            yield return new WaitUntil(() => LoadingPanel.Instance.loginPanel.LoginSuccess);
-        }
+        LoadingPanel.Instance.ShowTextLoading("Get access Token");
     }
     public IEnumerator IELoginToServer()
     {

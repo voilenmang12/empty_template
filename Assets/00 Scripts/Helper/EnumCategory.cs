@@ -257,6 +257,7 @@ public enum EPlatform
 {
     Telegram,
     Privy,
+    Android,
 }
 public enum EUIResourceResolution
 {
