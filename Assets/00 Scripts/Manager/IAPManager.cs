@@ -7,17 +7,17 @@ using UnityEngine.Purchasing.Extension;
 public class IAPManager : Singleton<IAPManager>, IDetailedStoreListener
 {
     IStoreController m_StoreController;
+    Dictionary<string, string> dicPriceString = new Dictionary<string, string>();
 
     public void InitializePurchasing()
     {
-        var builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
+        ConfigurationBuilder builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
 
         //Add products that will be purchasable and indicate its type.
         foreach (var item in DataSystem.Instance.dataIAP.dicConfigs)
         {
             builder.AddProduct(item.Value.packID, ProductType.Consumable);
         }
-
         UnityPurchasing.Initialize(this, builder);
     }
 
@@ -27,10 +27,21 @@ public class IAPManager : Singleton<IAPManager>, IDetailedStoreListener
             m_StoreController.InitiatePurchase(packId);
     }
 
+    public string GetPriceString(string packId)
+    {
+        if (dicPriceString.ContainsKey(packId))
+            return dicPriceString[packId];
+        return "";
+    }
+
     public void OnInitialized(IStoreController controller, IExtensionProvider extensions)
     {
         Debug.Log("In-App Purchasing successfully initialized");
         m_StoreController = controller;
+        foreach (var item in m_StoreController.products.all)
+        {
+            dicPriceString.Add(item.definition.id, item.metadata.localizedPriceString);
+        }
     }
 
     public void OnInitializeFailed(InitializationFailureReason error)

@@ -9,13 +9,9 @@ public interface IIAPController : IController<IAPControllerLocal>
     public int GetPackBought(EIAPPackType packType);
     public void PurchasePack(EIAPPackType packType);
     public void OnPurchaseSuccess(string packId, string transactionID);
-    public void FetchHistory();
-    public IAPHistoryResponse GetHistory();
-    public bool NotiUI();
-    public bool IsNotiMessage(string id);
-    public void OnShowUI();
 }
-public class IAPCachedData : IControllerCachedData
+#region Telegram
+public class IAPCachedDataTelegram : IControllerCachedData
 {
     public List<string> lstPackHandled = new List<string>();
     public Dictionary<string, int> dicPackBought = new Dictionary<string, int>();
@@ -53,9 +49,9 @@ public class IAPCachedData : IControllerCachedData
         return lstPackHandled.Contains(transactionID);
     }
 }
-public class IAPControllerLocal :
+public class IAPControllerTelegram :
 #if LOCAL_BUILD
-    BaseLocalController<IAPCachedData>
+    BaseLocalController<IAPCachedDataTelegram>
 #else
     CommonServerController<IAPCachedData>
 #endif
@@ -76,22 +72,17 @@ public class IAPControllerLocal :
     }
     public override IEnumerator IEFetchConfigs()
     {
-        IAPManager.Instance.InitializePurchasing();
-        yield break;
-
         DataSystem.Instance.dataIAP.ParseConfig(GameManager.Instance.GetConfig("iap_config"));
         yield return null;
     }
     protected override void OnFirstTick()
     {
         base.OnFirstTick();
-        return;
         FetchHistory();
     }
     protected override void FirstTimeInit()
     {
         base.FirstTimeInit();
-        return;
         UniRx.Observable.Interval(System.TimeSpan.FromSeconds(30)).Subscribe(_ => FetchHistory()).AddTo(GameManager.Instance.gameObject);
     }
     public int GetPackBought(EIAPPackType packType)
@@ -113,7 +104,6 @@ public class IAPControllerLocal :
 #if UNITY_WEBGL
         TelegramManager.OpenInvoice(dicInvoiceLink[DataSystem.Instance.dataIAP.dicConfigs[packType].packID]);
 #endif
-        IAPManager.Instance.PurchaseIAP(DataSystem.Instance.dataIAP.dicConfigs[packType].packID);
     }
     public void SendInvoiceLinkToDev(EIAPPackType packType)
     {
@@ -192,5 +182,62 @@ public class IAPControllerLocal :
     public bool IsNotiMessage(string id)
     {
         return lstNotiMessage.Contains(id);
+    }
+}
+#endregion
+
+public class IAPCachedData : IControllerCachedData
+{
+    public Dictionary<string, int> dicPackBought = new Dictionary<string, int>();
+
+    public void InitFirsTime()
+    {
+        foreach (var item in DataSystem.Instance.dataIAP.dicConfigs)
+        {
+            if(!dicPackBought.ContainsKey(item.Key.ToString()))
+                dicPackBought.Add(item.Key.ToString(), 0);
+        }
+    }
+
+    public void OnNewData()
+    {
+    }
+    public void SetPackBought(EIAPPackType packType)
+    {
+        dicPackBought[packType.ToString()]++;
+    }
+    public int GetPackBought(EIAPPackType packType)
+    {
+        return dicPackBought[packType.ToString()];
+    }
+}
+public class IAPControllerLocal : BaseLocalController<IAPCachedData>, IIAPController
+{
+    public override string KeyData()
+    {
+        return "data_iap";
+    }
+
+    public override string KeyEvent()
+    {
+        return Constant.EVENT_ON_IAP_CHANGE;
+    }
+
+    public int GetPackBought(EIAPPackType packType)
+    {
+        return cachedData.GetPackBought(packType);
+    }
+
+    public void OnPurchaseSuccess(string packId, string transactionID)
+    {
+        EIAPPackType packType = DataSystem.Instance.dataIAP.dicId[packId];
+        DataSystem.Instance.dataIAP.dicConfigs[packType].GetReward().ReceiveAndShow(EResourceFrom.IAP);
+        cachedData.SetPackBought(packType);
+        OnValueChange();
+    }
+
+    public void PurchasePack(EIAPPackType packType)
+    {
+        IAPManager.Instance.PurchaseIAP(DataSystem.Instance.dataIAP.dicConfigs[packType].packID);
     }
 }
