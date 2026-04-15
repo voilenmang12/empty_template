@@ -55,6 +55,7 @@ Các controller dùng pattern `SingletonController<T, D>` — tự động seria
 
 | Script | Mô tả |
 |---|---|
+| `DataSample` | Demo load data từ google sheet qua csv |
 | `DataSprites` | Sprite atlas theo loại resource |
 | `DataGamePrefabs` | Prefab references trung tâm |
 | `DataSoundEffect` | Mapping ESfx → AudioClip |
@@ -150,7 +151,7 @@ Assets/
 
 1. **Clone** repo về máy.
 2. Mở project bằng **Unity 6000.3.10f1** hoặc mới hơn.
-3. Mở scene **`Scenes/Loading Scene`** để chạy từ đầu, hoặc **`Scenes/Main UI`** để test UI.
+3. Mở scene **`Scenes/Splash Scene`** để chạy từ đầu.
 4. Gắn các `DataSystem` ScriptableObjects vào Inspector của `DataSystem` GameObject.
 5. Cấu hình IAP pack IDs trong `DataIAP`.
 6. Tùy chỉnh `Constant.cs` cho tên scene, event và layer của dự án.
