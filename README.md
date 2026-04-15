@@ -1,13 +1,10 @@
 # 🎮 Unity Game Template
 
-> **Template cơ bản phục vụ cho việc phát triển game nhanh chóng trên Unity**
-> *(A base template for rapid Unity game development)*
+> **A base template for rapid Unity game development**
 
 ---
 
-## 📋 Giới thiệu / Overview
-
-Đây là một **Unity project template** được xây dựng sẵn với đầy đủ các hệ thống cốt lõi, giúp các nhóm phát triển game bắt đầu dự án mới nhanh hơn mà không cần thiết lập từ đầu.
+## 📋 Overview
 
 This is a **ready-to-use Unity project template** packed with essential core systems, enabling development teams to jump-start new game projects without boilerplate setup.
 
@@ -16,72 +13,72 @@ This is a **ready-to-use Unity project template** packed with essential core sys
 
 ---
 
-## 🏗️ Kiến trúc hệ thống / System Architecture
+## 🏗️ System Architecture
 
 ### 🔧 Manager Systems (`Assets/00 Scripts/Manager/`)
 
-| Script | Mô tả |
+| Script | Description |
 |---|---|
-| `GameManager` | Quản lý game state, điều hướng scene, ads hooks |
-| `UIManager` | Quản lý toàn bộ UI/popup với pooling & flying objects |
-| `AudioManager` | Quản lý nhạc nền và SFX |
-| `DataSystem` | Trung tâm dữ liệu — sprites, prefabs, sound, fx, IAP |
-| `SceneHelper` | Chuyển cảnh có loading screen |
-| `ObjectPooler` | Object pool để tối ưu hiệu năng |
-| `TimerController` | Timer toàn cục — tick, update, new day/week/month |
-| `IAPManager` | Tích hợp Unity Purchasing (IAP) |
-| `IAPController` | Xử lý logic sau khi mua hàng |
+| `GameManager` | Manages game state, scene navigation, and ads hooks |
+| `UIManager` | Manages all UI/popups with pooling & flying objects |
+| `AudioManager` | Manages background music and SFX |
+| `DataSystem` | Central data hub — sprites, prefabs, sound, fx, IAP |
+| `SceneHelper` | Scene transitions with loading screen |
+| `ObjectPooler` | Object pool for performance optimization |
+| `TimerController` | Global timer — tick, update, new day/week/month |
+| `IAPManager` | Unity Purchasing (IAP) integration |
+| `IAPController` | Post-purchase logic handler |
 
 ### 🧩 Controller Systems (`Assets/00 Scripts/Manager/Controller/`)
 
-Các controller dùng pattern `SingletonController<T, D>` — tự động serialize/deserialize JSON vào `PlayerPrefs`:
+Controllers use the `SingletonController<T, D>` pattern — automatically serialize/deserialize JSON to `PlayerPrefs`:
 
-| Controller | Dữ liệu lưu trữ |
+| Controller | Stored Data |
 |---|---|
 | `PlayerResource` | Coin, Gem, Energy |
-| `PlayerInfoController` | Lịch sử level đã chơi |
-| `GameSettingController` | Âm nhạc, âm thanh, rung |
-| `AchievementController` | Tiến độ thành tích |
+| `PlayerInfoController` | Played level history |
+| `GameSettingController` | Music, sound, vibration |
+| `AchievementController` | Achievement progress |
 
 ### 🖥️ UI Systems (`Assets/00 Scripts/UI/`)
 
-- **`UIBase`** — Base class cho mọi panel/popup với animation, back key, block panel
-- **`UiHome` / `UiGameplay`** — Màn hình chính và gameplay
-- **Popup sẵn có:** WinGame, LoseGame, PauseGame, Setting, Endgame, ConfirmAction, ShowReward, và nhiều hơn nữa
+- **`UIBase`** — Base class for all panels/popups with animation, back key, and block panel support
+- **`UiHome` / `UiGameplay`** — Home screen and gameplay screen
+- **Built-in Popups:** WinGame, LoseGame, PauseGame, Setting, Endgame, ConfirmAction, ShowReward, and more
 - **Common UI:** CommonButton, CommonFill, CommonResourceBar, SoundButton, ToggleButton, UIFlyingObject
-- **`SafeArea`** — Tự động xử lý safe area trên iOS/Android
+- **`SafeArea`** — Automatically handles safe area on iOS/Android
 
 ### 📦 Data Systems (`Assets/00 Scripts/Data/`)
 
-| Script | Mô tả |
+| Script | Description |
 |---|---|
-| `DataSample` | Demo load data từ google sheet qua csv |
-| `DataSprites` | Sprite atlas theo loại resource |
-| `DataGamePrefabs` | Prefab references trung tâm |
-| `DataSoundEffect` | Mapping ESfx → AudioClip |
+| `DataSample` | Demo for loading data from Google Sheets via CSV |
+| `DataSprites` | Sprite atlas by resource type |
+| `DataGamePrefabs` | Central prefab references |
+| `DataSoundEffect` | ESfx → AudioClip mapping |
 | `DataFx` | Animation effects |
-| `DataIAP` | Cấu hình gói IAP |
-| `DataSample` | ScriptableObject mẫu |
+| `DataIAP` | IAP package configuration |
+| `DataSample` | Sample ScriptableObject |
 
 ### 🎮 Gameplay Systems (`Assets/00 Scripts/Gameplay/`)
 
-- `GameplayManager` — Quản lý state gameplay (Running / Pause / GameOver / Cinematic)
-- `TouchController` — Xử lý input chạm màn hình
-- `ResolutionManager` — Thích nghi tỷ lệ màn hình
+- `GameplayManager` — Manages gameplay state (Running / Pause / GameOver / Cinematic)
+- `TouchController` — Handles touch input
+- `ResolutionManager` — Adapts to screen aspect ratios
 
 ### 🛠️ Helper Utilities (`Assets/00 Scripts/Helper/`)
 
-- `Singleton<T>` & `SingletonController<T,D>` — Pattern singleton có lưu dữ liệu
-- `DebugCustom` — Logging wrapper chỉ hoạt động trong Editor
-- `ExtensionMethods` — Extension methods tiện ích
-- `CSVReader` — Đọc file CSV
-- `DateTimeHelper` — Tiện ích ngày giờ
-- `CustomBigValue` — Hỗ trợ giá trị số lớn (BigInteger)
-- `Helper` — Static utility functions chung
+- `Singleton<T>` & `SingletonController<T,D>` — Singleton pattern with persistent data
+- `DebugCustom` — Logging wrapper that only runs in the Editor
+- `ExtensionMethods` — Utility extension methods
+- `CSVReader` — CSV file reader
+- `DateTimeHelper` — Date/time utilities
+- `CustomBigValue` — Large number support (BigInteger)
+- `Helper` — General static utility functions
 
 ---
 
-## 📁 Cấu trúc thư mục / Folder Structure
+## 📁 Folder Structure
 
 ```
 Assets/
@@ -119,10 +116,10 @@ Assets/
 
 ---
 
-## 🔌 Plugins & Packages tích hợp sẵn
+## 🔌 Built-in Plugins & Packages
 
 ### Unity Packages
-| Package | Version | Mục đích |
+| Package | Version | Purpose |
 |---|---|---|
 | `com.unity.purchasing` | 4.14.2 | In-App Purchase |
 | `com.unity.inputsystem` | 1.18.0 | Input handling |
@@ -132,65 +129,65 @@ Assets/
 | `com.unity.ugui` | 2.0.0 | UI Toolkit |
 
 ### Third-party Plugins
-| Plugin | Mục đích |
+| Plugin | Purpose |
 |---|---|
-| **Odin Inspector (Sirenix)** | Công cụ Inspector nâng cao |
-| **DOTween Pro (Demigiant)** | Animation tween |
-| **Anti-Cheat Toolkit (CodeStage)** | Bảo vệ chống cheat |
-| **Spine Runtime** | Skeleton 2D animation |
-| **TextMesh Pro** | Rendering chữ nâng cao |
-| **TigerForge EasyEventManager** | Hệ thống event |
-| **I2 Localization** | Đa ngôn ngữ |
+| **Odin Inspector (Sirenix)** | Advanced Inspector tool |
+| **DOTween Pro (Demigiant)** | Animation tweening |
+| **Anti-Cheat Toolkit (CodeStage)** | Runtime cheat protection |
+| **Spine Runtime** | Skeletal 2D animation |
+| **TextMesh Pro** | Advanced text rendering |
+| **TigerForge EasyEventManager** | Event system |
+| **I2 Localization** | Multi-language support |
 | **JWT 11.0.0** | JSON Web Token (server auth) |
 | **Newtonsoft.Json** | JSON serialization |
 | **TriangleNet** | Triangulation/mesh generation |
 
 ---
 
-## 🚀 Cách bắt đầu / Getting Started
+## 🚀 Getting Started
 
-1. **Clone** repo về máy.
-2. Mở project bằng **Unity 6000.3.10f1** hoặc mới hơn.
-3. Mở scene **`Scenes/Splash Scene`** để chạy từ đầu.
-4. Gắn các `DataSystem` ScriptableObjects vào Inspector của `DataSystem` GameObject.
-5. Cấu hình IAP pack IDs trong `DataIAP`.
-6. Tùy chỉnh `Constant.cs` cho tên scene, event và layer của dự án.
-
----
-
-## 🔐 Bảo mật / Security Notes
-
-### Những gì đã được bảo vệ ✅
-
-| Hạng mục | Trạng thái |
-|---|---|
-| **Debug logging** | Tất cả log đã được bọc trong `#if UNITY_EDITOR` — không rò rỉ ra bản build |
-| **Anti-Cheat** | Tích hợp sẵn **Anti-Cheat Toolkit** (CodeStage) để bảo vệ dữ liệu runtime |
-| **Không hardcode secret** | Không có API key, token hay password nào được commit vào source code |
-| **`.gitignore`** | Đã thiết lập đúng chuẩn Unity — bỏ qua Library, build artifacts, user settings |
-| **Lưu dữ liệu** | Dữ liệu người dùng được lưu local qua `PlayerPrefs` + JSON, không có PII nhạy cảm |
-
-### Lưu ý khi phát triển ⚠️
-
-| Hạng mục | Khuyến nghị |
-|---|---|
-| **`IsTester` flag** | `GameManager.IsTester` bật chế độ hack/test UI — đảm bảo tắt (`false`) trong bản release |
-| **JWT package** | Đã cài `JWT 11.0.0` — nếu dùng xác thực server, hãy giữ bí mật JWT secret phía server, không commit vào client |
-| **PlayerPrefs** | Dữ liệu `PlayerPrefs` có thể bị đọc/chỉnh sửa trên thiết bị đã root/jailbreak — sử dụng Anti-Cheat Toolkit để mã hóa nếu cần |
-| **IAP validation** | Nên thêm xác thực receipt phía server để chống gian lận mua hàng |
+1. **Clone** the repository.
+2. Open the project with **Unity 6000.3.10f1** or newer.
+3. Open the **`Scenes/Splash Scene`** to run from the beginning.
+4. Assign the `DataSystem` ScriptableObjects to the `DataSystem` GameObject in the Inspector.
+5. Configure IAP pack IDs in `DataIAP`.
+6. Customize `Constant.cs` for the project's scene names, events, and layers.
 
 ---
 
-## 📝 Quy ước code / Code Conventions
+## 🔐 Security Notes
 
-- Singleton MonoBehaviour: kế thừa `Singleton<T>`
-- Controller có lưu dữ liệu: kế thừa `SingletonController<T, D>` với `D : ControllerCachedData`
-- Event communication: dùng `TigerForge.EventManager` với các key trong `Constant.cs`
-- Logging: dùng `DebugCustom.Log()` thay cho `Debug.Log()` trực tiếp
-- UI popup: kế thừa `UIBase`, đăng ký qua `UIManager.GetUI("Popup Name")`
+### What is Protected ✅
+
+| Item | Status |
+|---|---|
+| **Debug logging** | All logs are wrapped in `#if UNITY_EDITOR` — no leakage in builds |
+| **Anti-Cheat** | **Anti-Cheat Toolkit** (CodeStage) is integrated to protect runtime data |
+| **No hardcoded secrets** | No API keys, tokens, or passwords are committed to source code |
+| **`.gitignore`** | Configured to Unity standards — excludes Library, build artifacts, and user settings |
+| **Data storage** | User data is stored locally via `PlayerPrefs` + JSON with no sensitive PII |
+
+### Development Warnings ⚠️
+
+| Item | Recommendation |
+|---|---|
+| **`IsTester` flag** | `GameManager.IsTester` enables hack/test UI — ensure it is set to `false` in release builds |
+| **JWT package** | `JWT 11.0.0` is installed — if using server authentication, keep the JWT secret server-side and never commit it to the client |
+| **PlayerPrefs** | `PlayerPrefs` data can be read/modified on rooted/jailbroken devices — use Anti-Cheat Toolkit encryption if needed |
+| **IAP validation** | Server-side receipt validation is recommended to prevent purchase fraud |
+
+---
+
+## 📝 Code Conventions
+
+- Singleton MonoBehaviour: inherit from `Singleton<T>`
+- Controller with persistent data: inherit from `SingletonController<T, D>` where `D : ControllerCachedData`
+- Event communication: use `TigerForge.EventManager` with keys defined in `Constant.cs`
+- Logging: use `DebugCustom.Log()` instead of `Debug.Log()` directly
+- UI popup: inherit from `UIBase`, register via `UIManager.GetUI("Popup Name")`
 
 ---
 
 ## 📄 License
 
-Dự án này là template nội bộ. Vui lòng không phân phối plugin thương mại (Odin Inspector, DOTween Pro, Anti-Cheat Toolkit) kèm theo mà không có license hợp lệ.
+This project is an internal template. Please do not distribute commercial plugins (Odin Inspector, DOTween Pro, Anti-Cheat Toolkit) without valid licenses.
