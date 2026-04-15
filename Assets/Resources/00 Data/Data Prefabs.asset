@@ -23,3 +23,7 @@ MonoBehaviour:
     SerializationNodes: []
   uIFlyingObject: {fileID: 311757407203471233, guid: 57b6b154f4cc1f04e85a2747b50db1bf, type: 3}
   uiResourceItem: {fileID: 2811449333157318540, guid: 4310fe722ca54744e870e3dd67c2fc36, type: 3}
+  lineDrawItemPrefab: {fileID: 8823899006265664269, guid: 27d066ab2fe7f994c9fae203dbc89787, type: 3}
+  arrowItemPrefab: {fileID: 9154615523958514085, guid: 392e4227b95a1d242aff21a90c4b6ce3, type: 3}
+  foodItemPrefab: {fileID: 2843134259906004839, guid: 3adb1d1d77b20e348ba342e63eb79527, type: 3}
+  hotPotPrefab: {fileID: 9121555079214832483, guid: c72764afbe68030479d8927736d715a4, type: 3}

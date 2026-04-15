@@ -16,12 +16,19 @@ MonoBehaviour:
   deleteDllAfterBuilds: 1
   AutomateForAllAOTPlatforms: 1
   automateForPlatforms: 0900000014000000
-  lastScan: 638790281569566983
+  lastScan: 639106070180562833
   supportSerializedTypes:
+  - TypeName: System.Collections.Generic.Dictionary`2[[EIAPPackType, Assembly-CSharp],[UnityEngine.Sprite,
+      UnityEngine.CoreModule]], mscorlib
+    IsCustom: 0
+    Emit: 1
   - TypeName: UnityEngine.AudioClip, UnityEngine.AudioModule
     IsCustom: 0
     Emit: 1
   - TypeName: System.Boolean, mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: BoosterConfig, Assembly-CSharp
     IsCustom: 0
     Emit: 1
   - TypeName: UnityEngine.Color, UnityEngine.CoreModule
@@ -41,6 +48,22 @@ MonoBehaviour:
       UnityEngine.ParticleSystemModule]], mscorlib
     IsCustom: 0
     Emit: 1
+  - TypeName: System.Collections.Generic.Dictionary`2[[EAxis, Assembly-CSharp],[System.Collections.Generic.List`1[[UnityEngine.Vector2,
+      UnityEngine.CoreModule]], mscorlib]], mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Collections.Generic.Dictionary`2[[EAxis, Assembly-CSharp],[UnityEngine.Sprite,
+      UnityEngine.CoreModule]], mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Collections.Generic.Dictionary`2[[EBoosterType, Assembly-CSharp],[BoosterConfig,
+      Assembly-CSharp]], mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Collections.Generic.Dictionary`2[[EBoosterType, Assembly-CSharp],[UnityEngine.Sprite,
+      UnityEngine.CoreModule]], mscorlib
+    IsCustom: 0
+    Emit: 1
   - TypeName: System.Collections.Generic.Dictionary`2[[EButtonColor, Assembly-CSharp],[UnityEngine.Sprite,
       UnityEngine.CoreModule]], mscorlib
     IsCustom: 0
@@ -49,7 +72,23 @@ MonoBehaviour:
       UnityEngine.CoreModule]], mscorlib
     IsCustom: 0
     Emit: 1
+  - TypeName: System.Collections.Generic.Dictionary`2[[EConer, Assembly-CSharp],[System.Collections.Generic.List`1[[UnityEngine.Vector2,
+      UnityEngine.CoreModule]], mscorlib]], mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Collections.Generic.Dictionary`2[[EConer, Assembly-CSharp],[UnityEngine.Sprite,
+      UnityEngine.CoreModule]], mscorlib
+    IsCustom: 0
+    Emit: 1
   - TypeName: System.Collections.Generic.Dictionary`2[[EContentActiveResource, Assembly-CSharp],[UnityEngine.Sprite,
+      UnityEngine.CoreModule]], mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Collections.Generic.Dictionary`2[[EDirection, Assembly-CSharp],[System.Collections.Generic.List`1[[UnityEngine.Vector2,
+      UnityEngine.CoreModule]], mscorlib]], mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Collections.Generic.Dictionary`2[[EDirection, Assembly-CSharp],[UnityEngine.Sprite,
       UnityEngine.CoreModule]], mscorlib
     IsCustom: 0
     Emit: 1
@@ -89,37 +128,8 @@ MonoBehaviour:
       Assembly-CSharp]], mscorlib
     IsCustom: 0
     Emit: 1
-  - TypeName: System.Collections.Generic.Dictionary`2[[EUIResourceResolution, Assembly-CSharp],[System.Collections.Generic.Dictionary`2[[ECommonResource,
-      Assembly-CSharp],[UnityEngine.Sprite, UnityEngine.CoreModule]], mscorlib]],
-      mscorlib
-    IsCustom: 0
-    Emit: 1
-  - TypeName: System.Collections.Generic.Dictionary`2[[EUIResourceResolution, Assembly-CSharp],[System.Collections.Generic.Dictionary`2[[EContentActiveResource,
-      Assembly-CSharp],[UnityEngine.Sprite, UnityEngine.CoreModule]], mscorlib]],
-      mscorlib
-    IsCustom: 0
-    Emit: 1
-  - TypeName: System.Collections.Generic.Dictionary`2[[EUIResourceResolution, Assembly-CSharp],[System.Collections.Generic.Dictionary`2[[EExpireableResource,
-      Assembly-CSharp],[UnityEngine.Sprite, UnityEngine.CoreModule]], mscorlib]],
-      mscorlib
-    IsCustom: 0
-    Emit: 1
-  - TypeName: System.Collections.Generic.Dictionary`2[[EUIResourceResolution, Assembly-CSharp],[System.Collections.Generic.Dictionary`2[[ERarity,
-      Assembly-CSharp],[UnityEngine.Sprite, UnityEngine.CoreModule]], mscorlib]],
-      mscorlib
-    IsCustom: 0
-    Emit: 1
-  - TypeName: System.Collections.Generic.Dictionary`2[[EUIResourceResolution, Assembly-CSharp],[System.Collections.Generic.Dictionary`2[[EVirtualResource,
-      Assembly-CSharp],[UnityEngine.Sprite, UnityEngine.CoreModule]], mscorlib]],
-      mscorlib
-    IsCustom: 0
-    Emit: 1
   - TypeName: System.Collections.Generic.Dictionary`2[[EVirtualResource, Assembly-CSharp],[UnityEngine.Sprite,
       UnityEngine.CoreModule]], mscorlib
-    IsCustom: 0
-    Emit: 1
-  - TypeName: System.Collections.Generic.Dictionary`2[[System.Int32, mscorlib],[LeaderboardRewardConfig,
-      Assembly-CSharp]], mscorlib
     IsCustom: 0
     Emit: 1
   - TypeName: System.Collections.Generic.Dictionary`2[[System.Int32, mscorlib],[System.String,
@@ -134,14 +144,16 @@ MonoBehaviour:
       mscorlib]], mscorlib
     IsCustom: 0
     Emit: 1
-  - TypeName: System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.String,
-      mscorlib]], mscorlib
-    IsCustom: 0
-    Emit: 1
   - TypeName: EAchievementType, Assembly-CSharp
     IsCustom: 0
     Emit: 1
   - TypeName: EAnimationEffectType, Assembly-CSharp
+    IsCustom: 0
+    Emit: 1
+  - TypeName: EAxis, Assembly-CSharp
+    IsCustom: 0
+    Emit: 1
+  - TypeName: EBoosterType, Assembly-CSharp
     IsCustom: 0
     Emit: 1
   - TypeName: EButtonColor, Assembly-CSharp
@@ -150,7 +162,13 @@ MonoBehaviour:
   - TypeName: ECommonResource, Assembly-CSharp
     IsCustom: 0
     Emit: 1
+  - TypeName: EConer, Assembly-CSharp
+    IsCustom: 0
+    Emit: 1
   - TypeName: EContentActiveResource, Assembly-CSharp
+    IsCustom: 0
+    Emit: 1
+  - TypeName: EDirection, Assembly-CSharp
     IsCustom: 0
     Emit: 1
   - TypeName: EExpireableResource, Assembly-CSharp
@@ -166,6 +184,14 @@ MonoBehaviour:
       Assembly-CSharp]], mscorlib
     IsCustom: 0
     Emit: 1
+  - TypeName: System.Collections.Generic.EnumEqualityComparer`1[[EAxis, Assembly-CSharp]],
+      mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Collections.Generic.EnumEqualityComparer`1[[EBoosterType, Assembly-CSharp]],
+      mscorlib
+    IsCustom: 0
+    Emit: 1
   - TypeName: System.Collections.Generic.EnumEqualityComparer`1[[EButtonColor, Assembly-CSharp]],
       mscorlib
     IsCustom: 0
@@ -174,8 +200,16 @@ MonoBehaviour:
       Assembly-CSharp]], mscorlib
     IsCustom: 0
     Emit: 1
+  - TypeName: System.Collections.Generic.EnumEqualityComparer`1[[EConer, Assembly-CSharp]],
+      mscorlib
+    IsCustom: 0
+    Emit: 1
   - TypeName: System.Collections.Generic.EnumEqualityComparer`1[[EContentActiveResource,
       Assembly-CSharp]], mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Collections.Generic.EnumEqualityComparer`1[[EDirection, Assembly-CSharp]],
+      mscorlib
     IsCustom: 0
     Emit: 1
   - TypeName: System.Collections.Generic.EnumEqualityComparer`1[[EExpireableResource,
@@ -206,10 +240,6 @@ MonoBehaviour:
       mscorlib
     IsCustom: 0
     Emit: 1
-  - TypeName: System.Collections.Generic.EnumEqualityComparer`1[[EUIResourceResolution,
-      Assembly-CSharp]], mscorlib
-    IsCustom: 0
-    Emit: 1
   - TypeName: System.Collections.Generic.EnumEqualityComparer`1[[EVirtualResource,
       Assembly-CSharp]], mscorlib
     IsCustom: 0
@@ -224,9 +254,6 @@ MonoBehaviour:
     IsCustom: 0
     Emit: 1
   - TypeName: EShopEnergy, Assembly-CSharp
-    IsCustom: 0
-    Emit: 1
-  - TypeName: EUIResourceResolution, Assembly-CSharp
     IsCustom: 0
     Emit: 1
   - TypeName: EVirtualResource, Assembly-CSharp
@@ -261,6 +288,14 @@ MonoBehaviour:
       Assembly-CSharp]], mscorlib
     IsCustom: 0
     Emit: 1
+  - TypeName: System.Collections.Generic.IEqualityComparer`1[[EAxis, Assembly-CSharp]],
+      mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Collections.Generic.IEqualityComparer`1[[EBoosterType, Assembly-CSharp]],
+      mscorlib
+    IsCustom: 0
+    Emit: 1
   - TypeName: System.Collections.Generic.IEqualityComparer`1[[EButtonColor, Assembly-CSharp]],
       mscorlib
     IsCustom: 0
@@ -269,8 +304,16 @@ MonoBehaviour:
       mscorlib
     IsCustom: 0
     Emit: 1
+  - TypeName: System.Collections.Generic.IEqualityComparer`1[[EConer, Assembly-CSharp]],
+      mscorlib
+    IsCustom: 0
+    Emit: 1
   - TypeName: System.Collections.Generic.IEqualityComparer`1[[EContentActiveResource,
       Assembly-CSharp]], mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Collections.Generic.IEqualityComparer`1[[EDirection, Assembly-CSharp]],
+      mscorlib
     IsCustom: 0
     Emit: 1
   - TypeName: System.Collections.Generic.IEqualityComparer`1[[EExpireableResource,
@@ -301,10 +344,6 @@ MonoBehaviour:
       mscorlib
     IsCustom: 0
     Emit: 1
-  - TypeName: System.Collections.Generic.IEqualityComparer`1[[EUIResourceResolution,
-      Assembly-CSharp]], mscorlib
-    IsCustom: 0
-    Emit: 1
   - TypeName: System.Collections.Generic.IEqualityComparer`1[[EVirtualResource, Assembly-CSharp]],
       mscorlib
     IsCustom: 0
@@ -320,29 +359,45 @@ MonoBehaviour:
   - TypeName: System.Int32, mscorlib
     IsCustom: 0
     Emit: 1
-  - TypeName: LeaderboardRewardConfig, Assembly-CSharp
+  - TypeName: System.Collections.Generic.KeyValuePair`2[[System.Single, mscorlib],[System.Int32,
+      mscorlib]], mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Collections.Generic.KeyValuePair`2[[System.Int32, mscorlib],[LevelConfig,
+      Assembly-CSharp]], mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: LevelConfig, Assembly-CSharp
     IsCustom: 0
     Emit: 1
   - TypeName: System.Collections.Generic.List`1[[DailyQuestConfig, Assembly-CSharp]],
       mscorlib
     IsCustom: 0
     Emit: 1
-  - TypeName: System.Collections.Generic.List`1[[PartnerReferalConfig, Assembly-CSharp]],
-      mscorlib
+  - TypeName: System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
     IsCustom: 0
     Emit: 1
-  - TypeName: System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
+  - TypeName: System.Collections.Generic.List`1[[UnityEngine.Vector2, UnityEngine.CoreModule]],
+      mscorlib
     IsCustom: 0
     Emit: 1
   - TypeName: UnityEngine.ParticleSystem, UnityEngine.ParticleSystemModule
     IsCustom: 0
     Emit: 1
-  - TypeName: PartnerReferalConfig, Assembly-CSharp
+  - TypeName: System.Collections.Generic.SortedDictionary`2[[System.Single, mscorlib],[System.Int32,
+      mscorlib]], System
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Collections.Generic.SortedDictionary`2[[System.Int32, mscorlib],[LevelConfig,
+      Assembly-CSharp]], System
     IsCustom: 0
     Emit: 1
   - TypeName: UnityEngine.Sprite, UnityEngine.CoreModule
     IsCustom: 0
     Emit: 1
   - TypeName: System.String, mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: UnityEngine.Vector2, UnityEngine.CoreModule
     IsCustom: 0
     Emit: 1

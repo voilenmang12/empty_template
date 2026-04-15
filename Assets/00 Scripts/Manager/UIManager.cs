@@ -2,7 +2,6 @@ using Sirenix.OdinInspector;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using WE.UI;
 
 public class UIManager : Singleton<UIManager>
 {
@@ -164,7 +163,7 @@ public class UIManager : Singleton<UIManager>
             return dicUsedUI[name];
         UIBase _uiBase = null;
 
-        _uiBase = Instantiate(GetUIByPath(name), uISafeZone.transform);
+        _uiBase = Instantiate(GetUIByPath(name), uISafeZone.uiParent);
         _uiBase.transform.localPosition = Vector3.zero;
         _uiBase.transform.localScale = Vector3.one;
         _uiBase.gameObject.SetActive(false);
@@ -209,7 +208,7 @@ public class UIManager : Singleton<UIManager>
         {
             yield return new WaitForSeconds(0.1f);
             UIFlyingObject obj = ObjectPooler.Spawn(DataSystem.Instance.dataGamePrefabs.uIFlyingObject, transform.position + (Vector3)Random.insideUnitCircle * 1, parent);
-            obj.StartAnim(DataSystem.Instance.dataSprites.dicCommomSprites[EUIResourceResolution.x100][resouceType], delay);
+            obj.StartAnim(DataSystem.Instance.dataSprites.dicCommomSprites[resouceType], delay);
         }
 
         lstWaitFlying.Remove(key);
@@ -248,16 +247,6 @@ public class UIManager : Singleton<UIManager>
     public void ShowPopupPauseGame()
     {
         UIBase ui = GetUI("Popup Pause Game");
-        ui.Show();
-    }
-    public void ShowPopupEndGame()
-    {
-        UIBase ui = GetUI("Popup End Game");
-        ui.Show();
-    }
-    public void ShowPopupBooster()
-    {
-        UIBase ui = GetUI("Popup Booster");
         ui.Show();
     }
     public void ShowPopupTeam()
@@ -313,7 +302,7 @@ public class UIManager : Singleton<UIManager>
     public void ShowPopupWarning(System.Action actionClose, string txtDesc, string txtTile = "Warning", EButtonColor okColor = EButtonColor.Yellow, string txtBtnOk = "OK")
     {
         PopupConfirmAction ui = GetUI("Popup Confirm Action") as PopupConfirmAction;
-        ui.ShowWarning(actionClose, txtDesc, txtTile, okColor, txtBtnOk);
+        ui.ShowConfirmAction(actionClose, null, txtDesc, txtTile, okColor, txtBtnOk);
     }
     public void ShowPopupController()
     {
@@ -344,16 +333,6 @@ public class UIManager : Singleton<UIManager>
     {
         UIBase ui = GetUI("Popup Timeout");
         ui.Show();
-    }
-    public void ShowPopupTooltipResource(Vector3 pos, GameResource resource)
-    {
-        PopupTooltipResource ui = GetUI("Popup Tooltip Resource") as PopupTooltipResource;
-        ui.Show(pos, resource);
-    }
-    public void ShopPopupTooltipPackage(Vector3 pos, PackageResource pack)
-    {
-        PopupTooltipPackage ui = GetUI("Popup Tooltip Package") as PopupTooltipPackage;
-        ui.Show(pos, pack);
     }
     public void ShowPopupQuest()
     {
@@ -388,6 +367,30 @@ public class UIManager : Singleton<UIManager>
     public void ShowPopupMailBox()
     {
         UIBase ui = GetUI("Popup Mail Box");
+        ui.Show();
+    }
+
+    public void ShowPopupContinue()
+    {
+        UIBase ui = GetUI("Popup Continue");
+        ui.Show();
+    }
+
+    public void ShowPopupWinGame()
+    {
+        UIBase ui = GetUI("Popup Win Game");
+        ui.Show();
+    }
+
+    public void ShowPopupLoseGame()
+    {
+        UIBase ui = GetUI("Popup Lose Game");
+        ui.Show();
+    }
+
+    public void ShowPopupShopCoin()
+    {
+        UIBase ui = GetUI("Popup Shop Coin");
         ui.Show();
     }
     #endregion

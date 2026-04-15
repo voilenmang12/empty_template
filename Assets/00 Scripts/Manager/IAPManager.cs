@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Purchasing;
@@ -7,6 +6,9 @@ using UnityEngine.Purchasing.Extension;
 public class IAPManager : Singleton<IAPManager>, IDetailedStoreListener
 {
     IStoreController m_StoreController;
+#if UNITY_IOS || UNITY_MACOS
+    IExtensionProvider m_ExtensionProvider;
+#endif
     Dictionary<string, string> dicPriceString = new Dictionary<string, string>();
 
     public void InitializePurchasing()
@@ -23,6 +25,9 @@ public class IAPManager : Singleton<IAPManager>, IDetailedStoreListener
 
     public void PurchaseIAP(string packId)
     {
+#if UNITY_EDITOR
+        OnPurchaseSuccess(packId, "UnityEditor");
+#endif
         if (m_StoreController != null)
             m_StoreController.InitiatePurchase(packId);
     }
@@ -31,13 +36,16 @@ public class IAPManager : Singleton<IAPManager>, IDetailedStoreListener
     {
         if (dicPriceString.ContainsKey(packId))
             return dicPriceString[packId];
-        return "";
+        return "???";
     }
 
     public void OnInitialized(IStoreController controller, IExtensionProvider extensions)
     {
         Debug.Log("In-App Purchasing successfully initialized");
         m_StoreController = controller;
+#if UNITY_IOS || UNITY_MACOS
+        m_ExtensionProvider = extensions;
+#endif
         foreach (var item in m_StoreController.products.all)
         {
             dicPriceString.Add(item.definition.id, item.metadata.localizedPriceString);
@@ -61,6 +69,27 @@ public class IAPManager : Singleton<IAPManager>, IDetailedStoreListener
         Debug.Log(errorMessage);
     }
 
+    public void RestorePurchasing()
+    {
+#if UNITY_IOS || UNITY_MACOS
+        if (m_ExtensionProvider == null)
+        {
+            Debug.Log("RestorePurchasing: not initialized yet.");
+            return;
+        }
+        var apple = m_ExtensionProvider.GetExtension<IAppleExtensions>();
+        apple.RestoreTransactions((result, error) =>
+        {
+            if (result)
+                Debug.Log("RestorePurchasing: succeeded.");
+            else
+                Debug.Log($"RestorePurchasing: failed. Error: {error}");
+        });
+#else
+        Debug.Log("RestorePurchasing: not supported on this platform.");
+#endif
+    }
+    
     public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs args)
     {
         //Retrieve the purchased product
@@ -77,7 +106,7 @@ public class IAPManager : Singleton<IAPManager>, IDetailedStoreListener
 
     public void OnPurchaseSuccess(string packID, string transactionId)
     {
-        IIAPController.Instance.OnPurchaseSuccess(packID, transactionId);
+        IAPController.Instance.OnPurchaseSuccess(packID, transactionId);
     }
 
     public void OnPurchaseFailed(Product product, PurchaseFailureReason failureReason)

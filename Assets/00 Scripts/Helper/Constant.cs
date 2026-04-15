@@ -2,6 +2,8 @@ public static class Constant
 {
     #region Game Constant
 
+    public const int fixedMapSize = 10;
+
     public const int maxStatusSave = 15;
     public const float timeRewind = 0.5f;
 
@@ -60,7 +62,7 @@ public static class Constant
     public const string EVENT_ON_IAP_CHANGE = "EVENT_ON_IAP_CHANGE";
     public const string EVENT_ON_FRIEND_UPDATE = "EVENT_ON_FRIEND_UPDATE";
     public const string EVENT_ON_PARTNER_UPDATE = "EVENT_ON_PARTNER_UPDATE";
-    public const string EVENT_ON_REMOTE_CONFIG_UPDATE = "EVENT_ON_REMOTE_CONFIG_UPDATE";
+    public const string EVENT_ON_BOOSTER_UPDATE = "EVENT_ON_BOOSTER_UPDATE";
 
 
 
@@ -78,6 +80,8 @@ public static class Constant
     public const string ON_LUCKY_SPIN = "ON_LUCKY_SPIN";
     public const string ON_MAIL_BOX_UPDATE = "ON_MAIL_BOX_UPDATE";
     public const string ON_LOGIN_INFO_UPDATE = "ON_LOGIN_INFO_UPDATE";
+    public const string ON_CONVEYOR_UPDATE = "ON_CONVEYOR_UPDATE";
+    public const string ON_BOOSTER_USED = "ON_BOOSTER_USED";
 
     #endregion
 

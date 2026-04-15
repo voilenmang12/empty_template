@@ -32,24 +32,12 @@ public enum EAchievementType
 {
     Login,
     LevelPlay,
-    LevelWin,
+    LevelFailed,
     LevelCompleted,
-    EndlessPlay,
-    ReachEnlessStage,
-    WinEndlessStage,
-    SpendCoin,
-    SpendEnergy,
     SpinLuckyWheel,
+    UseBooster,
 }
 
-public enum ESfx
-{
-    ButtonSfx = 0,
-    RewardedSfx = 1,
-    ReceiveCoinSfx = 2,
-    WinSfx = 3,
-    LoseSfx = 4,
-}
 public enum ERarity
 {
     Common,
@@ -64,8 +52,6 @@ public enum ECommonResource
     Coin,
     Gem,
     Energy,
-    Exp,
-    ActivePoint,
 }
 public enum EVirtualResource
 {
@@ -87,19 +73,12 @@ public enum ERewardState
 }
 public enum EIAPPackType
 {
-    Starter,
-    Trainee,
-    Carpenter,
-    Professional,
-    Engineer,
-    Master,
-    Legend,
-    Gem1,
-    Gem2,
-    Gem3,
-    Gem4,
-    Gem5,
-    Gem6,
+    Coin_pack_1,
+    Coin_pack_2,
+    Coin_pack_3,
+    Coin_pack_4,
+    Coin_pack_5,
+    Coin_pack_6,
 }
 public enum EResourceFrom
 {
@@ -119,11 +98,12 @@ public enum EResourceFrom
     MergeEquipment,
     ServerGenerate,
     MintInInVentory,
-    DailyShop,
+    Shop,
     DailyQuest,
     InviteFriend,
     PartnerReferal,
-    Leaderboard
+    Leaderboard,
+    Tutorial,
 }
 public enum EButtonType
 {
@@ -137,6 +117,9 @@ public enum EButtonColor
     Yellow,
     Blue,
     Gray,
+    Purple,
+    Red,
+    Orange,
 }
 public enum EDiscount
 {
@@ -215,13 +198,6 @@ public enum ENodeType
     Monster,
     Treasure,
 }
-public enum EDirection
-{
-    Up,
-    Down,
-    Left,
-    Right,
-}
 public enum EGameSetting
 {
     Music,
@@ -247,20 +223,14 @@ public enum EShopEnergy
     ShopEnergy2,
     ShopEnergy3,
 }
-public enum EBuildType
+
+public enum EAdsRewardPlacement
 {
-    Publish,
-    Dev,
-    Local,
+    Booster,
+    X2GameCoin,
 }
-public enum EPlatform
+
+public enum EAdsInterPlacement
 {
-    Telegram,
-    Privy,
-    Android,
-}
-public enum EUIResourceResolution
-{
-    x100,
-    x200,
+    
 }

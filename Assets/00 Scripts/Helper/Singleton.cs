@@ -1,116 +1,125 @@
-﻿/*
- * Singleton.cs
- * 
- * - Unity Implementation of Singleton template
- * 
- */
-
-using System;
 using UnityEngine;
 
-/// <summary>
-/// Be aware this will not prevent a non singleton constructor
-///   such as `T myT = new T();`
-/// To prevent that, add `protected T () {}` to your singleton class.
-/// 
-/// As a note, this is made as MonoBehaviour because we need Coroutines.
-/// </summary>
-public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
+public class Singleton<T> : MonoBehaviour where T: MonoBehaviour
 {
-    private static T _instance;
-    private static bool _instantiated;
-    protected bool isDestroy;
-    public virtual void Awake()
+    public static T Instance;
+    protected virtual void Awake()
     {
-        isDestroy = false;
-        var objects = FindObjectsOfType<T>();
-
-        if (objects.Length > 1)
+        if (Instance == null)
         {
-            isDestroy = true;
-            Destroy(gameObject);
+            Instance = this as T;
         }
         else
         {
-            OnAwake();
+            Debug.Log($"Instance: {nameof(T)} already exists, destroying duplicate!");
+            Debug.Log($"Destroy {gameObject.name}");
+            Destroy(gameObject);
         }
     }
+}
 
-    protected virtual void OnAwake()
-    {
-    }
+public abstract class SingletonController<T, D> where T : SingletonController<T, D>, new() where D : ControllerCachedData, new()
+{
+    public static T Instance = new();
+    protected D cachedData;
 
-    public static T Instance
+    protected abstract string KeyData();
+    protected abstract string KeyEvent();
+    bool firstTime = true;
+    bool firstTick = true;
+    private bool waitSaveData = false;
+    public void Init()
     {
-        get
+        string json = PlayerPrefs.GetString(KeyData());
+        if (string.IsNullOrEmpty(json))
         {
-            if (_instantiated) return _instance;
-
-            var type = typeof(T);
-            var attribute = Attribute.GetCustomAttribute(type, typeof(SingletonAttribute)) as SingletonAttribute;
-
-            var objects = FindObjectsOfType<T>();
-
-            if (objects.Length > 0)
-            {
-                _instance = objects[0];
-                if (objects.Length > 1)
-                {
-                    //DebugCustom.LogWarning("There is more than one instance of Singleton of type \"" + type + "\". Keeping the first. Destroying the others.");
-                    for (var i = 1; i < objects.Length; i++) DestroyImmediate(objects[i].gameObject);
-                }
-
-                if (attribute != null && attribute.IsDontDestroy)
-                {
-                    DontDestroyOnLoad(_instance.gameObject);
-                }
-
-                _instantiated = true;
-                return _instance;
-            }
-
-            if (attribute == null)
-            {
-                //DebugCustom.LogError(type + "class does not have SingletonAttribute ! Please add SingletonAttribute for " + type);
-                return null;
-            }
-            if (string.IsNullOrEmpty(attribute.PathInstance))
-            {
-                //DebugCustom.LogError("Cannot find prefab of "+ type);
-                return null;
-            }
-
-            GameObject prefab = Resources.Load(attribute.PathInstance) as GameObject;
-            if (prefab == null)
-            {
-                //DebugCustom.LogError("Cannot find prefab of " + type + "! Put prefab of" + type + " into Resources folder");
-                return null;
-            }
-
-            GameObject gameObject = Instantiate(prefab);
-            _instance = gameObject.GetComponent<T>();
-            gameObject.name = type.ToString();
-
-            _instantiated = true;
-            return _instance;
+            cachedData = new D();
+            cachedData.OnNewData();
+            OnNewData();
+            SaveData();
         }
-
-        private set
+        else
         {
-            _instance = value;
-            _instantiated = value != null;
+            cachedData = Newtonsoft.Json.JsonConvert.DeserializeObject<D>(json);
         }
+        cachedData.FirstTimeInit();
+        if(firstTime)
+            FirstTimeInit();
+        OnInitSuccess();
     }
 
-    public static bool Instantiated
+    protected void SaveData()
     {
-        get { return _instantiated; }
+        waitSaveData = false;
+        string json = Newtonsoft.Json.JsonConvert.SerializeObject(cachedData);
+        PlayerPrefs.SetString(KeyData(), json);
+        PlayerPrefs.Save();
     }
 
-    public virtual void InitLevel()
+    protected virtual void OnNewData()
     {
-
+        
+    }
+    
+    protected virtual void FirstTimeInit()
+    {
+        firstTime = false;
+        TigerForge.EventManager.StartListening(Constant.EVENT_TIMER_TICK, OnTick);
+        TigerForge.EventManager.StartListening(Constant.EVENT_TIMER_UPDATE, OnUpdate);
+        TigerForge.EventManager.StartListening(Constant.EVENT_TIMER_NEW_DAY, OnNextDay);
+        TigerForge.EventManager.StartListening(Constant.EVENT_TIMER_NEW_WEEK, OnNextWeek);
+        TigerForge.EventManager.StartListening(Constant.EVENT_TIMER_NEW_MONTH, OnNextMonth);
     }
 
-    private void OnDestroy() { _instantiated = false; }
+    protected virtual void OnInitSuccess()
+    {
+        
+    }
+
+    protected virtual void OnNextDay()
+    {
+        
+    }
+
+    protected virtual void OnNextWeek()
+    {
+        
+    }
+
+    protected virtual void OnNextMonth()
+    {
+        
+    }
+
+    protected virtual void OnTick()
+    {
+        if(firstTick)
+            OnFirstTick();
+    }
+
+    protected virtual void OnFirstTick()
+    {
+        firstTick = false;
+    }
+
+    void OnUpdate()
+    {
+        if(waitSaveData)
+            SaveData();
+    }
+    protected virtual void OnValueChange()
+    {
+        waitSaveData = true;
+        TigerForge.EventManager.EmitEvent(KeyEvent());
+    }
+    public void ClearData()
+    {
+        PlayerPrefs.DeleteKey(KeyData());
+    }
+}
+
+public abstract class ControllerCachedData
+{
+    public abstract void OnNewData();
+    public abstract void FirstTimeInit();
 }

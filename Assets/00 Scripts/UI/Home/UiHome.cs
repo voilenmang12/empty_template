@@ -31,4 +31,9 @@ public class UiHome : MonoBehaviour
             homePanels[i].SetActive(homeToggleButtons[i] == button);
         }
     }
+
+    public void GoShopPanel()
+    {
+        homeToggleButtons[0].OnClick();
+    }
 }

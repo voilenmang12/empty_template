@@ -13,7 +13,7 @@ public abstract class GameResource
         {
             if (resourceData[1].TryToEnum(out ECommonResource resourceType))
             {
-                long resouceValue = Helper.ParseInt(resourceData[2]);
+                int resouceValue = Helper.ParseInt(resourceData[2]);
                 return new CommonResource(resourceType, resouceValue);
             }
         }
@@ -22,42 +22,26 @@ public abstract class GameResource
         {
             if (resourceData[1].TryToEnum(out EVirtualResource resourceType))
             {
-                long resourceValue = Helper.ParseInt(resourceData[2]);
+                int resourceValue = Helper.ParseInt(resourceData[2]);
                 return new VirtualResource(resourceType, resourceValue);
             }
         }
-
-        if (resourceData[0] == "ExpireableResource")
-        {
-            if (resourceData[1].TryToEnum(out EExpireableResource resourceType))
-            {
-                long resourceValue = Helper.ParseInt(resourceData[2]);
-                return new ExpireableResource(resourceType, resourceValue);
-            }
-        }
-
-        if (resourceData[0] == "ContentActiveResource")
-        {
-            if (resourceData[1].TryToEnum(out EContentActiveResource resourceType))
-                return new ContentActiveResource(resourceType);
-        }
-
-        Debug.LogError($"Null Parse Resource, {input}");
+        DebugCustom.LogError($"Null Parse Resource, {input}");
         return null;
     }
 
     public abstract bool VisualReward();
     public abstract bool VisualInventory();
-    public abstract Sprite GetIcon(EUIResourceResolution resolution = EUIResourceResolution.x200);
+    public abstract Sprite GetIcon();
 
-    public virtual Sprite GetBG(EUIResourceResolution resolution = EUIResourceResolution.x200)
+    public virtual Sprite GetBG()
     {
-        return DataSystem.Instance.dataSprites.dicItemBg[resolution][GetResourceRarity()];
+        return DataSystem.Instance.dataSprites.dicItemBg[GetResourceRarity()];
     }
 
-    public virtual Sprite GetBorder(EUIResourceResolution resolution = EUIResourceResolution.x200)
+    public virtual Sprite GetBorder()
     {
-        return DataSystem.Instance.dataSprites.dicItemBorder[resolution][GetResourceRarity()];
+        return DataSystem.Instance.dataSprites.dicItemBorder[GetResourceRarity()];
     }
 
     public abstract string GetName();
@@ -126,7 +110,7 @@ public class PackageResource
         return 0;
     }
 
-    public void ReceiveResource(EResourceFrom resourceFrom, bool updateSever = false, Action actionComplete = null, Action actionError = null)
+    public void ReceiveResource(EResourceFrom resourceFrom, Action actionComplete = null, Action actionError = null)
     {
         List<GameResource> lstVisual = new List<GameResource>();
         foreach (var item in lstResource)
@@ -139,13 +123,13 @@ public class PackageResource
             else
                 lstVisual.Add(item);
         }
-        IPlayerResource.Instance.AddResource(lstVisual, resourceFrom, updateSever, actionComplete, actionError);
+        PlayerResource.Instance.AddResource(lstVisual, resourceFrom, actionComplete, actionError);
     }
 
-    public void ReceiveAndShow(EResourceFrom resourceFrom, bool updateServer = false, Action actionComplete = null)
+    public void ReceiveAndShow(EResourceFrom resourceFrom, Action actionComplete = null)
     {
-        actionComplete += () => UIManager.Instance.PendingAction(()=> UIManager.Instance.ShowPopupReward(this));
-        ReceiveResource(resourceFrom, updateServer, actionComplete);
+        actionComplete += () => UIManager.Instance.ShowPopupReward(this);
+        ReceiveResource(resourceFrom, actionComplete);
     }
 
     public bool CanShowResource()
@@ -199,7 +183,7 @@ public class PackageResource
 
 public abstract class ItemResource : GameResource
 {
-    public long resourceValue;
+    public int resourceValue;
     public abstract bool CanUseResource();
     public abstract void SetupButton(CommonButton button);
     public override bool VisualInventory()
@@ -216,9 +200,9 @@ public class CommonResource : ItemResource
 {
     public ECommonResource resourceType;
 
-    public override Sprite GetIcon(EUIResourceResolution resolution = EUIResourceResolution.x200)
+    public override Sprite GetIcon()
     {
-        return DataSystem.Instance.dataSprites.dicCommomSprites[resolution][resourceType];
+        return DataSystem.Instance.dataSprites.dicCommomSprites[resourceType];
     }
 
     public override string GetName()
@@ -252,10 +236,6 @@ public class CommonResource : ItemResource
                 return ERarity.Epic;
             case ECommonResource.Energy:
                 return ERarity.Rare;
-            case ECommonResource.ActivePoint:
-                return ERarity.Mythical;
-            case ECommonResource.Exp:
-                return ERarity.Great;
         }
 
         return ERarity.Common;
@@ -271,7 +251,7 @@ public class CommonResource : ItemResource
 
     }
 
-    public CommonResource(ECommonResource resourceType, long value)
+    public CommonResource(ECommonResource resourceType, int value)
     {
         this.resourceType = resourceType;
         resourceValue = value;
@@ -302,7 +282,7 @@ public class VirtualResource : ItemResource
 {
     public EVirtualResource resourceType;
 
-    public VirtualResource(EVirtualResource resourceType, long resourceValue)
+    public VirtualResource(EVirtualResource resourceType, int resourceValue)
     {
         this.resourceType = resourceType;
         this.resourceValue = resourceValue;
@@ -328,9 +308,9 @@ public class VirtualResource : ItemResource
         return Helper.GetI2Translation($"{resourceType}_desc");
     }
 
-    public override Sprite GetIcon(EUIResourceResolution resolution = EUIResourceResolution.x200)
+    public override Sprite GetIcon()
     {
-        return DataSystem.Instance.dataSprites.dicVirtualSprites[resolution][resourceType];
+        return DataSystem.Instance.dataSprites.dicVirtualSprites[resourceType];
     }
 
     public override string GetName()
@@ -372,118 +352,5 @@ public class VirtualResource : ItemResource
     public override string GetRewardDataString()
     {
         return $"VirtualResource|{resourceType}|{resourceValue}";
-    }
-}
-public class ExpireableResource : ItemResource
-{
-    public EExpireableResource resourceType;
-    public ExpireableResource(EExpireableResource resourceType, long resourceValue)
-    {
-        this.resourceType = resourceType;
-        this.resourceValue = resourceValue;
-    }
-    public override bool CanUseResource()
-    {
-        return false;
-    }
-
-    public override bool CompareType(GameResource source)
-    {
-        if (source is ExpireableResource)
-        {
-            ExpireableResource exp = (ExpireableResource)source;
-            return exp.resourceType == resourceType;
-        }
-        return false;
-    }
-
-    public override string GetDesc()
-    {
-        return Helper.GetI2Translation($"{resourceType}_desc");
-    }
-
-    public override Sprite GetIcon(EUIResourceResolution resolution = EUIResourceResolution.x200)
-    {
-        return DataSystem.Instance.dataSprites.dicExpireableSprites[resolution][resourceType];
-    }
-
-    public override string GetName()
-    {
-        return Helper.GetI2Translation($"{resourceType}_name");
-    }
-
-    public override ERarity GetResourceRarity()
-    {
-        return ERarity.Epic;
-    }
-
-    public override void SetupButton(CommonButton button)
-    {
-
-    }
-    public override bool VisualReward()
-    {
-        return true;
-    }
-    public override string GetTextValue()
-    {
-        return "";
-    }
-    public override string GetRewardDataString()
-    {
-        return $"ExpireableResource|{resourceType}|{resourceValue}";
-    }
-}
-public class ContentActiveResource : GameResource
-{
-    public EContentActiveResource resourceType;
-
-    public ContentActiveResource(EContentActiveResource resourceType)
-    {
-        this.resourceType = resourceType;
-    }
-
-    public override bool CompareType(GameResource source)
-    {
-        return false;
-    }
-
-    public override string GetDesc()
-    {
-        return Helper.GetI2Translation($"{resourceType}_desc");
-    }
-
-    public override Sprite GetIcon(EUIResourceResolution resolution = EUIResourceResolution.x200)
-    {
-        return DataSystem.Instance.dataSprites.dicContentActiveSprites[resolution][resourceType];
-    }
-
-    public override string GetName()
-    {
-        return Helper.GetI2Translation($"{resourceType}_name");
-    }
-
-    public override ERarity GetResourceRarity()
-    {
-        return ERarity.Mythical;
-    }
-
-    public override string GetTextValue()
-    {
-        return "";
-    }
-
-    public override bool VisualInventory()
-    {
-        return false;
-    }
-
-    public override bool VisualReward()
-    {
-        return true;
-    }
-    public override string GetRewardDataString()
-    {
-        return $"ContentActiveResource|{resourceType}";
     }
 }

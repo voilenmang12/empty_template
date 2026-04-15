@@ -2,26 +2,41 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IGameSettingController : IController<GameSettingController>
+public class GameSettingCachedData : ControllerCachedData
 {
-    public static IGameSettingController Instance { get; } = new GameSettingController();
-    public bool GetSetting(EGameSetting setting);
-    public void ToggleSetting(EGameSetting setting);
+    public Dictionary<string, bool> dicGameSetting = new Dictionary<string, bool>();
+
+    public override void OnNewData()
+    {
+    }
+
+    public override void FirstTimeInit()
+    {
+    }
+
+    public void ToggleSetting(EGameSetting setting)
+    {
+        if (!dicGameSetting.ContainsKey(setting.ToString()))
+            dicGameSetting.Add(setting.ToString(), true);
+        dicGameSetting[setting.ToString()] = !dicGameSetting[setting.ToString()];
+    }
+
+    public bool GetSetting(EGameSetting setting)
+    {
+        if (!dicGameSetting.ContainsKey(setting.ToString()))
+            return true;
+        return dicGameSetting[setting.ToString()];
+    }
 }
-public class GameSettingController : 
-#if LOCAL_BUILD
-    BaseLocalController<GameSettingCachedData>
-#else
-    CommonServerController<GameSettingCachedData>
-#endif
-    , IGameSettingController
+
+public class GameSettingController : SingletonController<GameSettingController, GameSettingCachedData>
 {
-    public override string KeyData()
+    protected override string KeyData()
     {
         return "game_setting";
     }
 
-    public override string KeyEvent()
+    protected override string KeyEvent()
     {
         return Constant.EVENT_ON_GAME_SETTING_CHANGE;
     }
@@ -35,30 +50,5 @@ public class GameSettingController :
     {
         cachedData.ToggleSetting(setting);
         OnValueChange();
-    }
-}
-public class GameSettingCachedData : IControllerCachedData
-{
-    public Dictionary<string, bool> dicGameSetting = new Dictionary<string, bool>();
-    public void InitFirsTime()
-    {
-        List<EGameSetting> lstType = Helper.GetListEnum<EGameSetting>();
-        foreach (var item in lstType)
-        {
-            if (!dicGameSetting.ContainsKey(item.ToString()))
-                dicGameSetting.Add(item.ToString(), true);
-        }
-    }
-    public void ToggleSetting(EGameSetting setting)
-    {
-        dicGameSetting[setting.ToString()] = !dicGameSetting[setting.ToString()];
-    }
-    public bool GetSetting(EGameSetting setting)
-    {
-        return dicGameSetting[setting.ToString()];
-    }
-
-    public void OnNewData()
-    {
     }
 }

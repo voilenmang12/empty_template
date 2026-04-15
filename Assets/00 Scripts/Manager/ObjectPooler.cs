@@ -1,8 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static UnityEngine.ParticleSystem;
 
 public class Pooling
 {
@@ -73,9 +71,8 @@ public class ObjectPooler : Singleton<ObjectPooler>
 
     Dictionary<EAnimationEffectType, ParticleSystem> dicEffectInUse;
 
-    public override void Awake()
+    protected void Start()
     {
-        base.Awake();
         dicPooling = new Dictionary<string, Pooling>();
         dicCountDown = new Dictionary<string, float>();
         dicEffectInUse = new Dictionary<EAnimationEffectType, ParticleSystem>();

@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
+
 public class CommonResourceBar : MonoBehaviour
 {
     public Image iconResource;
@@ -14,27 +15,34 @@ public class CommonResourceBar : MonoBehaviour
     Tween animTween;
     Coroutine delayCoroutine;
     public ECommonResource resourceType;
+
     void Start()
     {
+        Button btn = GetComponent<Button>();
+        if (btn != null)
+            btn.onClick.AddListener(OnClick);
         TigerForge.EventManager.StartListening(Constant.ON_PLAYER_RESOURCE_UPDATE, UpdateResource);
-        iconResource.sprite = DataSystem.Instance.dataSprites.dicCommomSprites[EUIResourceResolution.x100][resourceType];
+        iconResource.sprite = DataSystem.Instance.dataSprites.dicCommomSprites[resourceType];
         UpdateResource();
     }
+
     private void OnDisable()
     {
         if (animTween != null)
             animTween.Kill();
         StopAllCoroutines();
     }
+
     private void OnEnable()
     {
-        long nextValue = IPlayerResource.Instance.GetCommonResource(resourceType); 
+        long nextValue = PlayerResource.Instance.GetCommonResource(resourceType);
         currentValue = nextValue;
         txtValue.text = currentValue.ToString();
     }
+
     void UpdateResource()
     {
-        long nextValue = IPlayerResource.Instance.GetCommonResource(resourceType);
+        long nextValue = PlayerResource.Instance.GetCommonResource(resourceType);
         if (!firstTime || !gameObject.activeInHierarchy)
         {
             currentValue = nextValue;
@@ -48,19 +56,34 @@ public class CommonResourceBar : MonoBehaviour
             delayCoroutine = StartCoroutine(IEDelayAnim(nextValue));
         }
     }
+
     IEnumerator IEDelayAnim(long nextValue)
     {
         if (nextValue > currentValue)
             yield return new WaitForSecondsRealtime(timeDelay);
         if (animTween != null)
             animTween.Kill();
-        animTween = DOTween.To(() => currentValue, x => currentValue = x, nextValue, timeAnim).SetUpdate(UpdateType.Normal).SetUpdate(true).OnUpdate(() =>
+        animTween = DOTween.To(() => currentValue, x => currentValue = x, nextValue, timeAnim)
+            .SetUpdate(true).OnUpdate(() => { txtValue.text = currentValue.ToString(); })
+            .OnComplete(() =>
+            {
+                currentValue = nextValue;
+                txtValue.text = currentValue.ToString();
+            });
+    }
+
+    void OnClick()
+    {
+        AudioManager.Instance.PlaySfx(ESfx.ButtonSfx);
+        if (GameplayManager.Instance == null)
         {
-            txtValue.text = currentValue.ToString();
-        }).OnComplete(() =>
+            UIManager.Instance.uIHome.GoShopPanel();
+        }
+        else
         {
-            currentValue = nextValue;
-            txtValue.text = currentValue.ToString();
-        });
+            if (GameplayManager.Instance.GameEnded)
+                return;
+            UIManager.Instance.ShowPopupShopCoin();
+        }
     }
 }

@@ -3,23 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ButtonToggleSetting : ToggleButton
+public class ButtonToggleSetting : MonoBehaviour
 {
-    public EGameSetting gameSetting;
-    protected override void Start()
+    public EGameSetting settingType;
+    public Button btn;
+    protected void Start()
     {
-        base.Start();
-        sprOn = DataSystem.Instance.dataSprites.dicSettingIcon[gameSetting][true];
-        sprOff = DataSystem.Instance.dataSprites.dicSettingIcon[gameSetting][false];
+        btn.onClick.AddListener(OnCick);
         TigerForge.EventManager.StartListening(Constant.EVENT_ON_GAME_SETTING_CHANGE, InitUI);
         InitUI();
     }
     void InitUI()
     {
-        SetActive(IGameSettingController.Instance.GetSetting(gameSetting));
+        bool setting = GameSettingController.Instance.GetSetting(settingType);
+        btn.image.color = setting ? Color.white : Color.gray;
     }
     public void OnCick()
     {
-        IGameSettingController.Instance.ToggleSetting(gameSetting);
+        AudioManager.Instance.PlaySfx(ESfx.ButtonSfx);
+        GameSettingController.Instance.ToggleSetting(settingType);
     }
 }

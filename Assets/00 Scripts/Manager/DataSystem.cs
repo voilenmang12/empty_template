@@ -8,11 +8,5 @@ public class DataSystem : Singleton<DataSystem>
     public DataGamePrefabs dataGamePrefabs;
     public DataSoundEffect dataSoundEffect;
     public DataFx dataAnimationEffect;
-    public DataShop dataShop;
     public DataIAP dataIAP;
-    public DataDailyQuest dataDailyQuest;
-    public DataLuckyWheel dataLuckyWheel;
-    public DataInviteFriend dataInviteFriend;
-    public DataPartnerReferal dataPartnerReferal;
-    public DataLeaderboard dataLeaderboard;
 }

@@ -1,3 +1,0 @@
--keep class net.codestage.actk.androidnative.ACTkAndroidRoutines { *; }
--keep class net.codestage.actk.androidnative.CodeHashGenerator {public void GetCodeHash(...);}
--keep class net.codestage.actk.androidnative.CodeHashCallback { *; }

@@ -21,28 +21,40 @@ using Newtonsoft.Json;
 
 public static class Helper
 {
-    public static JwtPayload ParseJwt(string jwtToken)
+    public static string GetTMPSpriteText(object obj)
     {
-        var jsonSerializer = new JsonNetSerializer();
-        var dateTimeProvider = new UtcDateTimeProvider();
-        var urlEncoder = new JwtBase64UrlEncoder();
-        var algorithm = new HMACSHA256Algorithm();
-        var validator = new JwtValidator(jsonSerializer, dateTimeProvider);
-
-        var jwtDecoder = new JwtDecoder(jsonSerializer, validator, urlEncoder, algorithm);
-        try
-        {
-            string payload = jwtDecoder.Decode(jwtToken, false);
-            DebugCustom.LogColor(payload);
-            return JsonConvert.DeserializeObject<JwtPayload>(payload);
-        }
-        catch (Exception ex)
-        {
-            Debug.LogError("Invalid token: " + ex.Message);
-        }
-
-        return null;
+        return $"<sprite name=\"{obj}\">";
     }
+    public static float GetHypotenuse(float adjacent, float angleDeg)
+    {
+        return adjacent / Mathf.Cos(angleDeg * Mathf.Deg2Rad);
+    }
+
+    /// <summary>
+    /// Trả về điểm giao nhau XA NHẤT của tia (start, direction) với đường tròn.
+    /// direction không cần normalize.
+    /// Trả về null nếu không có giao điểm phía trước tia.
+    /// </summary>
+    public static Vector2 RayCircleFarthestIntersection(
+        Vector2 start, Vector2 direction,
+        Vector2 circleCenter, float circleRadius)
+    {
+        // P(t) = start + t * direction, giải |P(t) - circleCenter|² = r²
+        // ⟹ a*t² + b*t + c = 0
+        Vector2 o = start - circleCenter;
+        float a = Vector2.Dot(direction, direction);
+        float b = 2f * Vector2.Dot(o, direction);
+        float c = Vector2.Dot(o, o) - circleRadius * circleRadius;
+
+        float disc = b * b - 4f * a * c;
+        if (disc < 0f) return Vector2.zero;                  // không giao
+
+        float t = (-b + Mathf.Sqrt(disc)) / (2f * a); // nghiệm lớn hơn = xa nhất
+        if (t < 0f) return Vector2.zero;                     // giao điểm ở sau tia
+
+        return start + t * direction;
+    }
+
     public static bool IsPointInPolygon(Vector2 point, Mesh mesh, Vector2 position, float rotation)
     {
         // Transform the point to the local space of the mesh
@@ -88,6 +100,7 @@ public static class Helper
 
         return ((b1 == b2) && (b2 == b3));
     }
+
     public static DateTime NextDay(this DateTime dateTime)
     {
         return dateTime.Date.AddDays(1); // Ngày tiếp theo, lúc 00:00:00
@@ -104,8 +117,10 @@ public static class Helper
         DateTime nextMonth = dateTime.AddMonths(1);
         return new DateTime(nextMonth.Year, nextMonth.Month, 1); // Ngày 1 tháng tiếp theo, 00:00:00
     }
+
     public static string GetTextResourceValue(long val)
     {
+        return val.ToString("#,##00", CultureInfo.InvariantCulture);
         List<string> lstSubfix = new List<string>
         {
             "", "K", "M", "B", "T", "E", "D", "A", "X", "Y", "Z",
@@ -162,9 +177,11 @@ public static class Helper
             {
                 gzipStream.Write(jsonBytes, 0, jsonBytes.Length);
             }
+
             return Convert.ToBase64String(outputStream.ToArray());
         }
     }
+
     public static Mesh GetMesh(List<List<Vector2>> contours)
     {
         Polygon poly = new Polygon();
@@ -172,11 +189,13 @@ public static class Helper
         {
             poly.Add(contours[i], i > 0);
         }
+
         var triangleNetMesh = (TriangleNetMesh)poly.Triangulate();
         var mesh = triangleNetMesh.GenerateUnityMesh();
         mesh.uv = Helper.GenerateUv(mesh.vertices);
         return mesh;
     }
+
     public static bool IsParallel(List<Vector2Int> lst)
     {
         List<Vector2Int> _lst = new List<Vector2Int>(lst);
@@ -185,12 +204,15 @@ public static class Helper
             if (_lst.Contains(new Vector2Int(-item.x, item.y)))
                 _lst.Remove(item);
         }
+
         return _lst.Count == 0;
     }
+
     public static Vector2 GetInLevelPosition(Vector2Int nodePos, int rotation)
     {
         return Quaternion.Inverse(Quaternion.Euler(0, 0, rotation)) * (Vector2)(nodePos);
     }
+
     public static Vector2 GetReflect(Vector2 point, Vector2 a, Vector2 b)
     {
         // Vector chỉ phương của đường thẳng AB
@@ -211,6 +233,7 @@ public static class Helper
 
         return reflectedPoint;
     }
+
     public static List<Vector2> GetHShapeContour(float x, float y, float corner)
     {
         List<Vector2> contour = new List<Vector2>();
@@ -232,35 +255,43 @@ public static class Helper
 
         // Bắt đầu đi viền theo ngược chiều kim đồng hồ
         contour.Add(topLeft);
-        contour.AddRange(Helper.GetCircleVertics(topLeft, corner, topLeft, new Vector2(-halfW + corner, halfH))); // Bo góc trên trái
+        contour.AddRange(Helper.GetCircleVertics(topLeft, corner, topLeft,
+            new Vector2(-halfW + corner, halfH))); // Bo góc trên trái
         contour.Add(new Vector2(-halfW + corner, halfH));
 
         contour.Add(new Vector2(-halfT, halfH));
-        contour.AddRange(Helper.GetCircleVertics(midTopLeft, corner, new Vector2(-halfT, halfH), midTopLeft)); // Bo góc vào thanh ngang trên
+        contour.AddRange(Helper.GetCircleVertics(midTopLeft, corner, new Vector2(-halfT, halfH),
+            midTopLeft)); // Bo góc vào thanh ngang trên
         contour.Add(midTopLeft);
 
         contour.Add(midTopRight);
-        contour.AddRange(Helper.GetCircleVertics(new Vector2(halfT, halfH), corner, midTopRight, new Vector2(halfT, halfH))); // Bo góc ra thanh ngang trên
+        contour.AddRange(Helper.GetCircleVertics(new Vector2(halfT, halfH), corner, midTopRight,
+            new Vector2(halfT, halfH))); // Bo góc ra thanh ngang trên
         contour.Add(new Vector2(halfT, halfH));
 
         contour.Add(new Vector2(halfW - corner, halfH));
-        contour.AddRange(Helper.GetCircleVertics(topRight, corner, new Vector2(halfW - corner, halfH), topRight)); // Bo góc trên phải
+        contour.AddRange(Helper.GetCircleVertics(topRight, corner, new Vector2(halfW - corner, halfH),
+            topRight)); // Bo góc trên phải
         contour.Add(topRight);
 
         contour.Add(bottomRight);
-        contour.AddRange(Helper.GetCircleVertics(bottomRight, corner, bottomRight, new Vector2(halfW - corner, -halfH))); // Bo góc dưới phải
+        contour.AddRange(Helper.GetCircleVertics(bottomRight, corner, bottomRight,
+            new Vector2(halfW - corner, -halfH))); // Bo góc dưới phải
         contour.Add(new Vector2(halfW - corner, -halfH));
 
         contour.Add(new Vector2(halfT, -halfH));
-        contour.AddRange(Helper.GetCircleVertics(midBottomRight, corner, new Vector2(halfT, -halfH), midBottomRight)); // Bo góc vào thanh ngang dưới
+        contour.AddRange(Helper.GetCircleVertics(midBottomRight, corner, new Vector2(halfT, -halfH),
+            midBottomRight)); // Bo góc vào thanh ngang dưới
         contour.Add(midBottomRight);
 
         contour.Add(midBottomLeft);
-        contour.AddRange(Helper.GetCircleVertics(new Vector2(-halfT, -halfH), corner, midBottomLeft, new Vector2(-halfT, -halfH))); // Bo góc ra thanh ngang dưới
+        contour.AddRange(Helper.GetCircleVertics(new Vector2(-halfT, -halfH), corner, midBottomLeft,
+            new Vector2(-halfT, -halfH))); // Bo góc ra thanh ngang dưới
         contour.Add(new Vector2(-halfT, -halfH));
 
         contour.Add(new Vector2(-halfW + corner, -halfH));
-        contour.AddRange(Helper.GetCircleVertics(bottomLeft, corner, new Vector2(-halfW + corner, -halfH), bottomLeft)); // Bo góc dưới trái
+        contour.AddRange(Helper.GetCircleVertics(bottomLeft, corner, new Vector2(-halfW + corner, -halfH),
+            bottomLeft)); // Bo góc dưới trái
         contour.Add(bottomLeft);
 
         return contour;
@@ -306,8 +337,8 @@ public static class Helper
 
 
         return contours;
-
     }
+
     public static List<Vector2> GetUShapeContour(float x, float y, float conner)
     {
         float z = Constant.barWidth;
@@ -321,21 +352,25 @@ public static class Helper
 
         contours.AddRange(GetCircleVertics(new Vector2(_x, -b), conner, new Vector2(_x, -a), new Vector2(x, -b)));
         contours.AddRange(GetCircleVertics(new Vector2(_x, _y), conner, new Vector2(x, _y), new Vector2(_x, y)));
-        contours.AddRange(GetCircleVertics(new Vector2(x1 + conner, _y), conner, new Vector2(x1 + conner, y), new Vector2(x1, _y)));
+        contours.AddRange(GetCircleVertics(new Vector2(x1 + conner, _y), conner, new Vector2(x1 + conner, y),
+            new Vector2(x1, _y)));
 
-        List<Vector2> a1 = GetCircleVertics(new Vector2(x1 - conner, a + conner), conner, new Vector2(x1 - conner, a), new Vector2(x1, a + conner));
+        List<Vector2> a1 = GetCircleVertics(new Vector2(x1 - conner, a + conner), conner, new Vector2(x1 - conner, a),
+            new Vector2(x1, a + conner));
         a1.Reverse();
         contours.AddRange(a1);
-        List<Vector2> a2 = GetCircleVertics(new Vector2(-x1 + conner, a + conner), conner, new Vector2(-x1, a + conner), new Vector2(-x1 + conner, a));
+        List<Vector2> a2 = GetCircleVertics(new Vector2(-x1 + conner, a + conner), conner, new Vector2(-x1, a + conner),
+            new Vector2(-x1 + conner, a));
         a2.Reverse();
         contours.AddRange(a2);
-        contours.AddRange(GetCircleVertics(new Vector2(-(x1 + conner), _y), conner, new Vector2(-x1, _y), new Vector2(-x1 - conner, y)));
+        contours.AddRange(GetCircleVertics(new Vector2(-(x1 + conner), _y), conner, new Vector2(-x1, _y),
+            new Vector2(-x1 - conner, y)));
         contours.AddRange(GetCircleVertics(new Vector2(-_x, _y), conner, new Vector2(-_x, y), new Vector2(-x, _y)));
         contours.AddRange(GetCircleVertics(new Vector2(-_x, -b), conner, new Vector2(-x, -b), new Vector2(-_x, -a)));
 
         return contours;
-
     }
+
     public static List<Vector2> GetTShapeContour(float x, float y, float conner)
     {
         float z = Constant.barWidth;
@@ -361,8 +396,8 @@ public static class Helper
         contours.AddRange(GetCircleVertics(new Vector2(-_x, -b), conner, new Vector2(-x, -b), new Vector2(-_x, -a)));
 
         return contours;
-
     }
+
     public static List<Vector2> GetLShapeContour(float x, float y, float conner)
     {
         float z = Constant.barWidth;
@@ -384,8 +419,8 @@ public static class Helper
         contours.AddRange(GetCircleVertics(new Vector2(-b, -b), conner, new Vector2(-a, -b), new Vector2(-b, -a)));
 
         return contours;
-
     }
+
     public static List<Vector2> GetTriangleContour(Vector2 a, Vector2 b, Vector2 c, float corner)
     {
         List<Vector2> _contour = new List<Vector2>();
@@ -398,13 +433,13 @@ public static class Helper
 
         // Điểm bo góc trên các cạnh
         Vector2 abaConner = a + abDir * corner; // Điểm trên cạnh AB, cách đỉnh A một đoạn corner
-        Vector2 abbConner = b - abDir * corner;   // Điểm trên cạnh AB, cách đỉnh B một đoạn corner
+        Vector2 abbConner = b - abDir * corner; // Điểm trên cạnh AB, cách đỉnh B một đoạn corner
 
         Vector2 bcbConner = b + bcDir * corner; // Điểm trên cạnh BC, cách đỉnh B một đoạn corner
-        Vector2 bccConner = c - bcDir * corner;   // Điểm trên cạnh BC, cách đỉnh C một đoạn corner
+        Vector2 bccConner = c - bcDir * corner; // Điểm trên cạnh BC, cách đỉnh C một đoạn corner
 
         Vector2 cacConner = c + caDir * corner; // Điểm trên cạnh CA, cách đỉnh C một đoạn corner
-        Vector2 caaConner = a - caDir * corner;   // Điểm trên cạnh CA, cách đỉnh A một đoạn corner
+        Vector2 caaConner = a - caDir * corner; // Điểm trên cạnh CA, cách đỉnh A một đoạn corner
 
         Vector2 aCenter = GetReflect(a, abaConner, caaConner);
         Vector2 bCenter = GetReflect(b, abbConner, bcbConner);
@@ -429,18 +464,22 @@ public static class Helper
 
         //_contour.Add(new Vector2(-_x, -y));
         //_contour.Add(new Vector2(_x, -y));
-        _contour.AddRange(Helper.GetCircleVertics(new Vector2(_x, -_y), conner, new Vector2(_x, -y), new Vector2(x, -_y)));
+        _contour.AddRange(Helper.GetCircleVertics(new Vector2(_x, -_y), conner, new Vector2(_x, -y),
+            new Vector2(x, -_y)));
         //_contour.Add(new Vector2(x, -_y));
         //_contour.Add(new Vector2(x, _y));
         _contour.AddRange(Helper.GetCircleVertics(new Vector2(_x, _y), conner, new Vector2(x, _y), new Vector2(_x, y)));
         //_contour.Add(new Vector2(_x, y));
         //_contour.Add(new Vector2(-_x, y));
-        _contour.AddRange(Helper.GetCircleVertics(new Vector2(-_x, _y), conner, new Vector2(-_x, y), new Vector2(-x, _y)));
+        _contour.AddRange(Helper.GetCircleVertics(new Vector2(-_x, _y), conner, new Vector2(-_x, y),
+            new Vector2(-x, _y)));
         //_contour.Add(new Vector2(-x, _y));
         //_contour.Add(new Vector2(-x, -_y));
-        _contour.AddRange(Helper.GetCircleVertics(new Vector2(-_x, -_y), conner, new Vector2(-x, -_y), new Vector2(-_x, -y)));
+        _contour.AddRange(Helper.GetCircleVertics(new Vector2(-_x, -_y), conner, new Vector2(-x, -_y),
+            new Vector2(-_x, -y)));
         return _contour;
     }
+
     /// <summary>
     /// GetCircleVertics By Reverse Clock Wise Circle
     /// </summary>
@@ -462,6 +501,7 @@ public static class Helper
             startAngle = Get2DAngle(start);
             endAngle = Get2DAngle(end);
         }
+
         startAngle = NormalizeAngleTo(startAngle, endAngle);
         while (startAngle < endAngle)
         {
@@ -472,8 +512,10 @@ public static class Helper
             else
                 break;
         }
+
         return verts;
     }
+
     /// <summary>
     /// Chuyển đổi góc a thành góc lượng giác nhỏ nhất và gần b nhất theo đường tròn lượng giác.
     /// </summary>
@@ -484,6 +526,7 @@ public static class Helper
         float delta = Mathf.DeltaAngle(a, b);
         return b - (delta >= 0 ? delta : 360 + delta);
     }
+
     public static Vector2[] GenerateUv(Vector3[] vertices, float uvScale = 0.5f)
     {
         Vector2[] uvs = new Vector2[vertices.Length];
@@ -494,6 +537,7 @@ public static class Helper
 
         return uvs;
     }
+
     public static string FormatSortString(string input)
     {
         if (string.IsNullOrEmpty(input) || input.Length <= 6)
@@ -506,6 +550,7 @@ public static class Helper
 
         return $"{start}...{end}";
     }
+
     public static int GetDiscountPercent(EDiscount eDiscount)
     {
         switch (eDiscount)
@@ -523,14 +568,17 @@ public static class Helper
             default:
                 break;
         }
+
         return 0;
     }
+
     public static T TryGetValue<T>(this List<T> lst, int id)
     {
         if (id < 0 || id >= lst.Count)
             return default(T);
         return lst[id];
     }
+
     public static List<string> GetSubStats(string str)
     {
         string[] split = str.Split("}{");
@@ -539,8 +587,10 @@ public static class Helper
         {
             result.Add(s.Replace("{", "").Replace("}", ""));
         }
+
         return result;
     }
+
     public static int RandomDirection()
     {
         int i = Random.Range(0, 2);
@@ -549,6 +599,7 @@ public static class Helper
         else
             return -1;
     }
+
     public static Vector2 GetRecoilDirection(this Vector2 baseDirection, float angle)
     {
         if (Mathf.Approximately(angle, 0))
@@ -578,6 +629,7 @@ public static class Helper
 
         return distance;
     }
+
     public static bool Equivalent(this Color _color, Color _target)
     {
         return Mathf.Abs(_color.r - _target.r) < 0.1f && Mathf.Abs(_color.g - _target.g) < 0.1f &&
@@ -836,6 +888,7 @@ public static class Helper
     {
         return $"<color=#{ColorUtility.ToHtmlStringRGBA(color)}>{str}</color>";
     }
+
     public static T GetRandomEnum<T>() where T : Enum
     {
         Array values = Enum.GetValues(typeof(T));
@@ -915,6 +968,7 @@ public static class Helper
 
         return angle;
     }
+
     /// <summary>
     /// Get Angle From 0 -> 360
     /// </summary>
@@ -924,6 +978,7 @@ public static class Helper
     {
         return Get360Angle(90 - getAngle(dir.x, dir.y));
     }
+
     public static float Get180Anlge(float angle)
     {
         while (angle > 180)
@@ -964,12 +1019,6 @@ public static class Helper
         Vector2 dir = new Vector3(horizontal, vertical);
         Vector2 pos = startPos + dir * distance;
         return pos;
-    }
-    public static Vector3 GetRandomPosInScreen()
-    {
-        return new Vector3(
-            Random.Range(ResolutionManager.Instance.ScreenLeftEdge, ResolutionManager.Instance.ScreenRightEdge),
-            Random.Range(ResolutionManager.Instance.ScreenBottomEdge, ResolutionManager.Instance.ScreenTopEdge));
     }
 
     public static Vector2 GetPerpendicular2D(Vector2 line)
@@ -1024,37 +1073,6 @@ public static class Helper
         }
     }
 
-    public static Vector2? IntersectionWithSceneBorder(Vector2 start, Vector2 end, float offset = 0)
-    {
-        Vector2[] vertices = new Vector2[4];
-        vertices[0] = new Vector2(ResolutionManager.Instance.ScreenLeftEdge + offset,
-            ResolutionManager.Instance.ScreenTopEdge - offset);
-        vertices[1] = new Vector2(ResolutionManager.Instance.ScreenRightEdge - offset,
-            ResolutionManager.Instance.ScreenTopEdge - offset);
-        vertices[2] = new Vector2(ResolutionManager.Instance.ScreenLeftEdge + offset,
-            ResolutionManager.Instance.ScreenBottomEdge + offset);
-        vertices[3] = new Vector2(ResolutionManager.Instance.ScreenRightEdge - offset,
-            ResolutionManager.Instance.ScreenBottomEdge + offset);
-
-        for (int i = 0; i < 4; i++)
-        {
-            Vector2 edge = vertices[(i + 1) % 4] - vertices[i];
-            Vector2 toStart = start - vertices[i];
-            Vector2 toEnd = end - vertices[i];
-
-            float dotStart = Vector2.Dot(toStart, edge);
-            float dotEnd = Vector2.Dot(toEnd, edge);
-
-            if (dotStart * dotEnd < 0)
-            {
-                float t = dotStart / (dotStart - dotEnd);
-                Vector2 intersection = start + t * (end - start);
-                return intersection;
-            }
-        }
-
-        return null;
-    }
 
     public static bool AreSegmentsIntersecting(Vector2 start1, Vector2 end1, Vector2 start2, Vector2 end2,
         out Vector2 intersection)
@@ -1085,16 +1103,6 @@ public static class Helper
         // Lines do not intersect
         intersection = Vector2.zero;
         return false;
-    }
-
-    public static bool IsInScene(Vector2 point, float offset = 0)
-    {
-        Rect rect = new Rect(
-            new Vector2(ResolutionManager.Instance.ScreenLeftEdge + offset,
-                ResolutionManager.Instance.ScreenBottomEdge + offset),
-            new Vector2(ResolutionManager.Instance.WorldWidth - offset * 2,
-                ResolutionManager.Instance.WorldHigh - offset * 2));
-        return rect.Contains(point);
     }
 
     public static int GetSortingOder(float transformY)
@@ -1266,7 +1274,7 @@ public static class Helper
         }
 
         yield return null;
-        SaveCsvFromString(www.text, destinationFileName);
+        // SaveCsvFromString(www.text, destinationFileName);
         yield return null;
         actionComplete?.Invoke(www.text);
         yield return null;

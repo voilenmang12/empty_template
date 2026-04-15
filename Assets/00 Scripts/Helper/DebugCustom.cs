@@ -11,20 +11,6 @@ public class DebugCustom
     {
         get
         {
-#if UNITY_EDITOR
-            return true;
-#endif
-            switch (GameManager.Instance.BuildType)
-            {
-                case EBuildType.Publish:
-                    return false;
-                case EBuildType.Dev:
-                case EBuildType.Local:
-                    return true;
-                default:
-                    break;
-            }
-
             return false;
         }
     }

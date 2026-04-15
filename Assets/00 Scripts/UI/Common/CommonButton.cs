@@ -51,8 +51,6 @@ public class CommonButton : MonoBehaviour
     }
     protected void OnButtonStateChange()
     {
-        if (button != null)
-            button.enabled = GameManager.Instance.DicButtonState[buttonType] && GameManager.Instance.DicButtonState[EButtonType.Common];
     }
     public void SetupButton(EButtonColor color, string txt, bool canInteract, System.Action actionClick)
     {

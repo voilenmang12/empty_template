@@ -51,6 +51,7 @@ public class UIBase : MonoBehaviour
         {
             buttonClose.onClick.AddListener(() =>
             {
+                AudioManager.Instance.PlaySfx(ESfx.ButtonSfx);
                 Hide();
             });
         }

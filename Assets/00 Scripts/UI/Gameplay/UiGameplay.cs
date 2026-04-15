@@ -1,3 +1,4 @@
+using System;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,8 +7,7 @@ using System.Collections;
 
 public class UiGameplay : MonoBehaviour
 {
-    public TextMeshProUGUI txtLevel, txtTimer, txtTut, txtScore;
-    public GameObject tutBox;
+    public TextMeshProUGUI txtLevel;
 
     private void Start()
     {
@@ -16,42 +16,29 @@ public class UiGameplay : MonoBehaviour
 
     public void Initialize()
     {
-        HideTextTut();
         TigerForge.EventManager.StartListening(Constant.EVENT_TIMER_TICK, OnTick);
         InitLevel();
         TigerForge.EventManager.StartListening(Constant.EVENT_LEVEL_INITED, InitLevel);
         OnTick();
     }
+
     void InitLevel()
     {
-        if (GameManager.Instance.GameType == EGameType.Campaign)
-        {
-            txtLevel.text = $"Level {GameplayManager.Instance.CurrentLevel}";
-            txtScore.gameObject.SetActive(false);
-        }
-        else
-        {
-            txtScore.gameObject.SetActive(true);
-        }
+        txtLevel.text = $"Level {GameplayManager.Instance.LevelId}";
     }
+
     void OnTick()
     {
-        txtTimer.text = Helper.TimeToString(System.TimeSpan.FromSeconds(GameplayManager.Instance.LevelTime));
-        txtScore.text = $"Score: {GameplayManager.Instance.Score}";
     }
+
     public void OnClickPauseGame()
     {
         if (GameplayManager.Instance.State == EGamePlayState.Running)
             UIManager.Instance.ShowPopupPauseGame();
     }
 
-    public void ShowTextTut(string txt)
+    public void OnClickRestartGame()
     {
-        txtTut.text = txt;
-        tutBox.SetActive(true);
-    }
-    public void HideTextTut()
-    {
-        tutBox.SetActive(false);
+        GameManager.Instance.PlayGame(GameManager.Instance.GameType);
     }
 }

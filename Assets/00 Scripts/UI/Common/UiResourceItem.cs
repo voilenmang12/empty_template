@@ -6,7 +6,6 @@ using TMPro;
 using DG.Tweening;
 public class UiResourceItem : MonoBehaviour
 {
-    public EUIResourceResolution resolution;
     public Image icon, bg, border;
     public TextMeshProUGUI txtCount;
     public GameObject fxGlow;
@@ -21,9 +20,9 @@ public class UiResourceItem : MonoBehaviour
             return;
         }
         gameObject.SetActive(true);
-        icon.sprite = visualResource.GetIcon(resolution);
-        bg.sprite = visualResource.GetBG(resolution);
-        border.sprite = visualResource.GetBorder(resolution);
+        icon.sprite = visualResource.GetIcon();
+        bg.sprite = visualResource.GetBG();
+        border.sprite = visualResource.GetBorder();
         btn.interactable = interactable;
         if (effectAppear)
         {
@@ -37,6 +36,6 @@ public class UiResourceItem : MonoBehaviour
     }
     public void OnClick()
     {
-        UIManager.Instance.ShowPopupTooltipResource(icon.transform.position, visualResource);
+        
     }
 }

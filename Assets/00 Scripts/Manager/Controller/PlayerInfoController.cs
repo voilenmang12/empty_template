@@ -2,61 +2,53 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-public class PlayerInfoConstant
+
+public class PlayerInfoCachedData : ControllerCachedData
 {
-    public int maxLevel = 50;
+    public Dictionary<int, int> dicPlayedLevel = new Dictionary<int, int>();
+    
+    public override void OnNewData()
+    {
+    }
+
+    public override void FirstTimeInit()
+    {
+    }
+
+    public void SetPlay(int level)
+    {
+        if(!dicPlayedLevel.ContainsKey(level))
+            dicPlayedLevel.Add(level, 0);
+        dicPlayedLevel[level]++;
+    }
+
+    public int GetPlayLevel(int level)
+    {
+        if (!dicPlayedLevel.ContainsKey(level))
+            return 0;
+        return dicPlayedLevel[level];
+    }
 }
-
-public interface IPlayerInfoController : IController<PlayerInfoController>
+public class PlayerInfoController : SingletonController<PlayerInfoController, PlayerInfoCachedData>
 {
-    public void WinLevel();
-    public int CurrentLevel();
-    public int MaxLevel();
-}
-
-public class PlayerInfoController :
-#if LOCAL_BUILD
-    BaseLocalController<PlayerInfoCachedData>
-#else
-    CommonServerController<PlayerInfoCachedData>
-#endif
-    , IPlayerInfoController
-{
-    public PlayerInfoConstant constant = new PlayerInfoConstant();
-
-    public override string KeyData()
+    protected override string KeyData()
     {
         return "player_info";
     }
-    public override string KeyEvent()
+
+    protected override string KeyEvent()
     {
         return Constant.EVENT_ON_PLAYER_INFO_CHANGE;
     }
-    public void WinLevel()
+
+    public void SetPlayed()
     {
-        if (CurrentLevel() < constant.maxLevel)
-        {
-            cachedData.level++;
-            IAchievementController.Instance.UpdateAchievementProgress(EAchievementType.LevelCompleted, CurrentLevel() - 1, true);
-            OnValueChange();
-        }
+        cachedData.SetPlay(AchievementController.Instance.GetAchievementProgress(EAchievementType.LevelCompleted) + 1);
+        OnValueChange();
     }
-    public int CurrentLevel()
+
+    public int GetLevelPlayed()
     {
-        return cachedData.level;
+        return cachedData.GetPlayLevel(AchievementController.Instance.GetAchievementProgress(EAchievementType.LevelCompleted) + 1);
     }
-    public int MaxLevel()
-    {
-        return constant.maxLevel;
-    }
-}
-public class PlayerInfoCachedData : IControllerCachedData
-{
-    public void InitFirsTime()
-    {
-    }
-    public void OnNewData()
-    {
-    }
-    public int level = 1;
 }

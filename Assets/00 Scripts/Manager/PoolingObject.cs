@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using DG.Tweening;
 
@@ -22,6 +23,12 @@ public class PoolingObject : MonoBehaviour
         _OnDespawn?.Invoke();
     }
 
+    protected virtual IEnumerator IEDespawn(float time)
+    {
+        yield return new WaitForSeconds(time);
+        Despawn();
+    }
+    
     protected virtual void OnDisable()
     {
         StopAllCoroutines();

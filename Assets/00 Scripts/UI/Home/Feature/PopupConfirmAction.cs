@@ -25,17 +25,4 @@ public class PopupConfirmAction : UIBase
         });
         Show();
     }
-    public void ShowWarning(System.Action actionClose,string txtDesc, string txtTile = "Warning", EButtonColor okColor = EButtonColor.Yellow, string txtBtnOk = "OK")
-    {
-        this.txtTitle.text = txtTile;
-        this.txtDesc.text = txtDesc;
-        btnNo.gameObject.SetActive(false);
-        btnOk.SetupButton(okColor, txtBtnOk, true, () =>
-        {
-            Hide();
-            actionClose?.Invoke();
-        });
-        Show();
-    }
-
 }
